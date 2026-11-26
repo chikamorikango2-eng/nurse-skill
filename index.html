@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ja" data-mode="r">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="スキル評価">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#2f7fe0">
+<title>看護スキル評価</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* VOICE everyday: 看護師本人も管理者も前向きになれる、明るく温かいスキル帳
+   IDEA スキル帳の「マイページ」：澄んだ青の地に白いカード、大きな総合力、色付きスキル札とレベルの点
+   PICTURE 6軸レーダー（個人・比較・組織平均）、スキル札リスト、部署×看護師の適合度マップ
+   COLOUR 空色→藍のグラデーション帯、白カード、数字は濃い青 #1b5fd0、スキル札は寒色パステル
+   TYPE M PLUS Rounded 1c 800 + Noto Sans JP
+   LAYOUT 上部に濃紺帯とタブ、画面ごとに「図」を左、数値と操作を右。600px以下は縦積み */
+:root{color-scheme:light dark;--bg:light-dark(#eef5fc,#0d1422);--card:light-dark(#ffffff,#172236);--ink:light-dark(#13223a,#e9f0fa);--sub:light-dark(#566a85,#a3b6cf);--line:light-dark(#d9e5f2,#2a3a55);--panel:light-dark(#ffffff,#172236);--soft:light-dark(#f2f7fd,#1f2c44);--hot:light-dark(#1b5fd0,#74b0ff);--band:linear-gradient(165deg,#38b6e8 0%,#2f7fe0 55%,#4a55d6 100%);--bandink:#ffffff;--s1:light-dark(#257de0,#338ced);--s2:light-dark(#f47230,#e76624);--s3:light-dark(#00b894,#00a888);--bad:light-dark(#d9432f,#ff7a66);--good:light-dark(#0a7d32,#3ecf6e)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans JP",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"M PLUS Rounded 1c","Noto Sans JP",sans-serif;font-weight:800;line-height:1.2;letter-spacing:-.01em;margin:0}
+h1{font-size:clamp(24px,3.4vw,34px)}
+h2{font-size:clamp(22px,3vw,30px);text-wrap:balance}
+h3{font-size:18px}
+.band{padding:clamp(20px,3vw,40px) max(4vw,16px)}
+.top{background:var(--band);color:var(--bandink);padding:18px max(4vw,16px) 0;text-shadow:0 1px 2px rgba(10,40,110,.3)}
+.top .row{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;max-width:1240px;margin:auto}
+.top p{margin:0;opacity:.85;font-size:14px}
+nav{display:flex;gap:4px;overflow-x:auto;max-width:1240px;margin:14px auto 0}
+nav a{flex:none;color:#fff;text-decoration:none;padding:11px 16px;border-radius:10px 10px 0 0;font-weight:500;opacity:.85}
+nav a:hover{opacity:1;background:rgba(255,255,255,.1)}
+nav a.on{background:var(--bg);color:var(--hot);opacity:1;text-shadow:none;font-weight:700}
+main{max-width:1240px;margin:auto}
+.muted{color:var(--sub);font-size:14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:20px;box-shadow:0 6px 20px -12px rgba(30,80,170,.35)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:24px;align-items:start}
+.fig{position:relative;min-height:380px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+svg text{paint-order:stroke;stroke:var(--card);stroke-width:4px;font-family:"Noto Sans JP",sans-serif}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(7.5em,1fr));gap:12px;margin:16px 0}
+.kpi{background:var(--card);border-radius:18px;padding:12px 14px;border:1px solid var(--line)}
+.kpi b{display:block;font:800 clamp(26px,3.4vw,34px)/1.1 "M PLUS Rounded 1c",sans-serif;white-space:nowrap;color:var(--hot)}
+.kpi span{font-size:13px;color:var(--sub)}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:8.5em minmax(0,1fr) 3em;gap:10px;align-items:center;font-size:14px}
+.bar .t{height:12px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar .t i{display:block;height:100%;background:var(--s1);border-radius:0 4px 4px 0}
+.bar .v{text-align:right;font-variant-numeric:tabular-nums;font-weight:800;color:var(--hot)}
+.bar.low .t i{background:var(--bad)}
+button,.btn{font:500 15px "Noto Sans JP",sans-serif;min-height:44px;padding:8px 18px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--s1)}
+button.pri,a.pri{background:linear-gradient(90deg,#2b9ce8,#3d5fdc);border-color:transparent;color:#fff;font-weight:700;border-radius:99px}
+button.warn{color:var(--bad);border-color:var(--bad)}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible,label.opt:focus-within{outline:3px solid var(--s2);outline-offset:2px}
+input,select,textarea{font:16px "Noto Sans JP",sans-serif;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);min-height:44px}
+textarea{width:100%;min-height:140px;font-size:13px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-weight:500;color:var(--sub);font-size:13px;white-space:nowrap}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.click{cursor:pointer}tr.click:hover{background:var(--soft)}
+.spark{display:flex;gap:3px;align-items:flex-end;height:26px}
+.spark i{width:9px;background:var(--s1);border-radius:2px 2px 0 0}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}
+.tag.bad{color:var(--bad);border-color:var(--bad)}
+/* assessment */
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 18px}
+.steps button{min-height:38px;padding:4px 12px;font-size:14px}
+.steps button.on{background:var(--hot);color:#fff;border-color:var(--hot)}
+.steps button{border-radius:99px}
+.steps button.done::after{content:" ✓";color:var(--good)}
+.q{padding:16px 0;border-bottom:1px solid var(--line)}
+.q p{margin:0 0 10px;font-weight:500}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+label.opt{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-height:44px;font-size:14px;cursor:pointer;background:var(--bg)}
+label.opt input{position:absolute;opacity:0;width:1px;height:1px}
+label.opt b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--soft);font-size:12px}
+label.opt:has(input:checked){border-color:var(--hot);background:color-mix(in srgb,var(--hot) 12%,var(--card))}
+label.opt:has(input:checked) b{background:var(--hot);color:#fff}
+.field{display:grid;gap:4px;font-size:14px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(14em,1fr));gap:14px}
+.sticky{position:sticky;top:12px}
+.live>b{font:800 52px/1 "M PLUS Rounded 1c",sans-serif;color:var(--hot)}
+/* heatmap */
+.hm td.c{text-align:center;font-variant-numeric:tabular-nums;font-size:13px;min-width:4.2em;border:2px solid var(--card);position:relative}
+.hm td.c.cur{outline:2px dashed var(--ink);outline-offset:-4px}
+.hm td.c.pick{font-weight:700}
+.hm td.c.pick::after{content:"●";position:absolute;top:1px;right:4px;font-size:9px;color:var(--s2)}
+.hm th.d{writing-mode:horizontal-tb;font-size:12px;min-width:4.2em;text-align:center}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--sub);align-items:center}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:4px}
+.note{font-size:13px;color:var(--sub);margin-top:10px}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:13px;padding:6px 10px;border-radius:8px;opacity:0;transition:opacity .1s;z-index:9;max-width:260px}
+.dlg{border:1px solid var(--bad);border-radius:10px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.deptcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;display:grid;gap:10px}
+.wts{display:grid;grid-template-columns:repeat(auto-fit,minmax(4.6em,1fr));gap:6px}
+.wts select{padding:6px 4px}
+.wts label{font-size:12px;display:grid;gap:2px}
+.chk{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px}
+.chk label{display:flex;gap:4px;align-items:center}
+.chk input{min-height:0;width:18px;height:18px}
+.hero{background:var(--band);margin:calc(-1*clamp(20px,3vw,40px)) calc(-1*max(4vw,16px)) 24px;padding:18px max(4vw,16px) 26px;color:#fff;text-align:center}
+.hero .name{display:inline-block;background:rgba(255,255,255,.88);color:var(--ink);font:800 22px "M PLUS Rounded 1c",sans-serif;padding:6px 26px;border-radius:16px}
+.hero .big{font:800 clamp(72px,14vw,120px)/1 "M PLUS Rounded 1c",sans-serif;color:#fff;text-shadow:0 4px 18px rgba(10,40,120,.4);margin:6px 0 0}
+.hero .big small{font-size:22px;opacity:.85}
+.hero .chips{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:14px}
+.hero .chip{background:var(--card);color:var(--ink);border-radius:20px;padding:8px 18px;min-width:8.5em}
+.hero .chip span{display:block;font-size:13px;color:var(--sub)}.hero .chip b{font:800 22px "M PLUS Rounded 1c",sans-serif}
+.sgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 8px;text-align:center}
+.sgrid span{display:block;font-size:13px;font-weight:700;line-height:1.3;min-height:2.6em}
+.sgrid b{font:800 clamp(30px,5vw,44px)/1 "M PLUS Rounded 1c",sans-serif;color:var(--hot)}
+.sgrid .low b{color:var(--bad)}
+.skl{display:grid;gap:6px}
+.skl .hd{display:flex;justify-content:space-between;align-items:center;background:var(--soft);border-left:4px solid var(--s1);border-radius:12px;padding:10px 14px;margin-bottom:6px}
+.skl .hd b{font-family:"M PLUS Rounded 1c",sans-serif}
+.cnt{background:var(--s1);color:#fff;border-radius:99px;padding:1px 12px;font-weight:700;font-size:14px}
+.sk{display:grid;grid-template-columns:minmax(0,1.4fr) auto;gap:12px;align-items:center;padding:6px 8px;border-radius:14px}
+.sk:nth-child(even){background:var(--soft)}
+.pill{border-radius:10px;padding:8px 10px;text-align:center;font-weight:700;color:#2b1d15;font-size:15px;line-height:1.3}
+.dots{display:flex;gap:7px;align-items:center}
+.dots i{width:18px;height:18px;border-radius:50%;background:light-dark(#dcdcdc,#4a3d36)}
+.dots i.on{width:30px;height:30px;display:grid;place-items:center;font:800 15px "M PLUS Rounded 1c",sans-serif;font-style:normal;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+.redo{display:block;width:100%;margin-top:12px;border:0;border-radius:99px;background:linear-gradient(90deg,#3fc1d0,#5b7ff0);color:#fff;font-weight:700}
+.cols3{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;align-items:start}
+.ga{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+.home{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(18px,3vw,40px);align-items:center;background:var(--band);color:#fff;margin:calc(-1*clamp(20px,3vw,40px)) calc(-1*max(4vw,16px)) 0;padding:clamp(24px,4vw,48px) max(4vw,16px)}
+.home h2{font-size:clamp(30px,4.4vw,48px);line-height:1.1;text-shadow:0 2px 10px rgba(10,40,120,.3)}
+.home p{font-size:17px;margin:14px 0 22px;max-width:30em}
+.home .go{display:inline-flex;align-items:center;min-height:52px;padding:10px 28px;border-radius:99px;background:#fff;color:#1b5fd0;font-weight:800;text-decoration:none;font-size:17px;box-shadow:0 8px 20px -8px rgba(10,40,120,.5)}
+.home .sub{display:inline-flex;align-items:center;min-height:52px;padding:10px 20px;color:#fff;font-weight:700;margin-left:6px}
+.art{background:var(--card);border-radius:28px;box-shadow:0 18px 40px -18px rgba(10,40,120,.55);aspect-ratio:16/10}
+.art svg{width:100%;height:100%;display:block}
+.flow{offset-path:path("M218 170 C 270 120, 320 230, 372 176");offset-rotate:0deg}
+@media(prefers-reduced-motion:no-preference){.flow{animation:flow 2.4s linear infinite}.flow.f2{animation-delay:.8s}.flow.f3{animation-delay:1.6s}@keyframes flow{from{offset-distance:0%;opacity:0}15%{opacity:1}85%{opacity:1}to{offset-distance:100%;opacity:0}}.rgrow{transform-origin:478px 182px;animation:rg 3.2s ease-in-out infinite alternate}@keyframes rg{from{transform:scale(.82)}to{transform:scale(1)}}}
+@media(prefers-reduced-motion:reduce){.flow{offset-distance:50%}}
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}
+.how .panel{display:grid;gap:6px}.how b.no{font:800 30px/1 "M PLUS Rounded 1c",sans-serif;color:var(--hot)}
+.axchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.axchips span{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-weight:700;font-size:14px}
+@media(max-width:760px){.home{grid-template-columns:minmax(0,1fr)}.how{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:860px){.grid2,.ga{grid-template-columns:minmax(0,1fr)}.sticky{position:static}.ga .sticky{order:-1}}
+@media(max-width:600px){.fig{min-height:320px}.bar{grid-template-columns:6.5em minmax(0,1fr) 2.6em}table{font-size:13px}th,td{padding:6px 4px}.hide-s{display:none}}
+@media(prefers-reduced-motion:no-preference){.grow{animation:grow .6s ease-out}@keyframes grow{from{transform:scale(.6);opacity:0}}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="row"><h1>看護スキル評価</h1><p>質問に答えるだけで、6つの領域のスキルを見える形に</p></div>
+  <nav id="nav">
+    <a href="#home" data-r="home">ホーム</a>
+    <a href="#list" data-r="list">組織・一覧</a>
+    <a href="#assess" data-r="assess">スキル評価</a>
+    <a href="#analysis" data-r="analysis">部署のスキル分析</a>
+    <a href="#settings" data-r="settings">設定・データ</a>
+  </nav>
+</header>
+<main id="app" class="band"></main>
+<div class="tip" id="tip"></div>
+<script>
+{
+const AX=[{k:'basic',n:'基礎スキル',s:'基礎'},{k:'hosp',n:'病院独自スキル',s:'病院独自'},{k:'spec',n:'専門スキル',s:'専門'},{k:'exp',n:'経験年数',s:'経験'},{k:'nontech',n:'ノンテクニカル',s:'ノンテク'},{k:'night',n:'夜勤対応力',s:'夜勤'}];
+const SC_SKILL=['未経験・できない','指導を受けながらできる','一人でできる','状況に応じ応用できる','他者に指導できる'];
+const SC_FREQ=['ほとんどできない','ときどきできる','おおむねできる','いつもできる','模範を示せる'];
+const SC_HOSP=['未受講・未経験','受講中・一部習得','修了・習得済み','実践で活用している','指導者・推進役'];
+const SC_NIGHT=['夜勤未経験','見習い中','独り立ち','夜勤リーダー経験あり','夜勤リーダーを常時担う'];
+const BASIC=[['b1','バイタルサイン測定とフィジカルアセスメントで、異常の兆候に気づける'],['b2','注射・点滴・輸液ポンプ等の与薬を、確認手順を守り安全に実施できる'],['b3','採血・末梢静脈路確保ができる'],['b4','標準予防策・感染経路別予防策を実践できる'],['b5','転倒転落・褥瘡などのリスクを評価し、予防策を立てられる'],['b6','看護記録を正確かつ適時に記載できる'],['b7','急変時にBLS（一次救命処置）を実施し、応援を呼べる'],['b8','患者・家族への説明や退院に向けた指導ができる']];
+const SPEC=[['s_er','救急看護（トリアージ・初期対応）'],['s_icu','集中治療（人工呼吸器・鎮静・循環補助などの管理）'],['s_cv','循環器看護（心電図判読・心カテ前後の管理）'],['s_neuro','脳神経看護（意識レベル評価・脳卒中急性期ケア）'],['s_ope','手術看護（器械出し・外回り）'],['s_onc','がん・緩和ケア（化学療法・疼痛管理）'],['s_rehab','リハビリテーション・回復期看護（ADL評価・在宅復帰支援）'],['s_dial','透析看護'],['s_psy','精神科看護（精神状態のアセスメント・行動制限下のケア）'],['s_ortho','整形外科看護（術前後管理・ロコモ・転倒予防）'],['s_home','在宅・訪問看護（在宅療養支援・地域連携）'],['s_gi','消化器看護（内視鏡検査・治療の前後管理・消化器疾患）'],['s_surg','外科病棟看護（周術期管理・ドレーン・創傷管理）'],['s_med','内科看護（慢性疾患・多疾患併存の管理と療養指導）']];
+const NONTECH=[['n1','患者・家族・多職種と、相手に合わせたコミュニケーションがとれる'],['n2','チームの状況を見て、自ら協力・応援を申し出られる'],['n3','SBARなどで要点を簡潔に報告・相談できる'],['n4','病棟全体の状況を把握し、変化を予測して動ける（状況認識）'],['n5','限られた情報から優先順位を判断し、意思決定できる'],['n6','リーダーとして業務調整・指示出しができる'],['n7','後輩・学生の指導や相談対応ができる'],['n8','ストレスや疲労をセルフコントロールし、周囲にも配慮できる']];
+const NIGHT=[['nt2','少人数体制で急変が起きたとき、初期対応と応援要請を判断できる'],['nt3','夜間に複数患者のケア・処置の優先順位を組み立てられる'],['nt4','夜間の医師への報告・指示受けの必要性を適切に判断できる'],['nt5','不穏・せん妄のある患者に安全に対応できる']];
+const SHORT={s_rehab:'回復期リハ看護',b1:'身体所見評価',b2:'与薬・注射',b3:'採血・静脈路確保',b4:'感染対策',b5:'リスク予防',b6:'看護記録',b7:'急変時BLS',b8:'患者・家族指導',n1:'コミュニケーション',n2:'チームワーク',n3:'報連相（SBAR）',n4:'状況認識',n5:'意思決定',n6:'リーダーシップ',n7:'育成対応力',n8:'セルフコントロール',nt1:'夜勤での役割',nt2:'夜間急変対応',nt3:'優先順位づけ',nt4:'医師報告の判断',nt5:'不穏・せん妄対応'};
+const PILL=['#a9d8fb','#9fe6dc','#c3c9fa','#b8e6c4','#9cc4f5','#d3c4f2','#a6e3ee','#b9d0f7','#a8ead0','#c9d7ff','#9fd9f0','#d8cff6','#b3e0e8','#bfd6ea'];
+const DOTC=['#2a8fe0','#14a594','#5b63e0','#2e9e58','#2f6fd6','#7a5bd6','#0f9fbf','#3f74d8','#18a476','#4f63e8','#1592c2','#6c58d8','#1f97a8','#3b78b8'];
+const shortOf=q=>SHORT[q[0]]||String(q[1]).split('（')[0];
+const QUAL=[['なし',0],['院内認定ナース',8],['特定行為研修修了',12],['認定看護師',20],['専門看護師',20]];
+const NAVAIL=['不可（0回）','月1〜3回','月4〜6回','月7回以上'];
+const ADV={basic:'基礎技術のチェックリスト確認とOJTでの再評価',hosp:'未修了の院内研修の受講計画づくり',spec:'関心領域へのローテーションや認定取得の支援',exp:'経験の幅を広げる計画的なローテーション',nontech:'リーダー補佐やカンファレンス司会など役割の付与',night:'夜勤リーダー見習いと急変シミュレーション訓練'};
+const DEF_HOSP=[['h1','院内クリニカルラダー研修'],['h2','電子カルテ・院内システム（オーダー・部門システム）の操作'],['h3','院内急変対応（RRT・コードブルー）の手順'],['h4','多職種チーム（NST・リハ・薬剤など）のカンファレンス参画'],['h5','医療安全：インシデント報告と分析（院内ルール）'],['h6','地域連携・退院支援の院内フロー']];
+const GROUPS=['急性期・集中病棟','急性期・一般病棟','急性期・外来その他','精神科・病棟','精神科・外来','地域包括ケア・病棟','地域包括ケア・外来その他','回復期リハ・病棟','回復期リハ・外来その他','訪問看護'];
+const GW={'急性期・集中病棟':[2,1,3,2,2,3],'急性期・一般病棟':[2,2,2,1,2,2],'急性期・外来その他':[2,2,2,2,3,0],'精神科・病棟':[2,2,2,1,3,2],'精神科・外来':[2,2,2,1,3,0],'地域包括ケア・病棟':[2,2,1,1,3,2],'地域包括ケア・外来その他':[2,2,2,1,3,0],'回復期リハ・病棟':[2,2,1,1,3,1],'回復期リハ・外来その他':[2,2,1,1,3,0],'訪問看護':[3,1,2,3,3,0]};
+const DEF_DEPT=[
+ ['救命救急病棟','急性期・集中病棟',['s_er','s_icu','s_cv']],['ＨＣＵ','急性期・集中病棟',['s_icu','s_cv','s_neuro']],['ＩＣＵ','急性期・集中病棟',['s_icu','s_cv']],
+ ['５階Ｂ病棟','急性期・一般病棟',["s_cv"]],['５階Ｃ病棟','急性期・一般病棟',["s_cv"]],['６階Ａ病棟','急性期・一般病棟',["s_ortho"]],['６階Ｂ病棟','急性期・一般病棟',["s_neuro", "s_gi"]],['７階Ａ病棟','急性期・一般病棟',["s_med"]],['８階Ａ病棟','急性期・一般病棟',["s_surg"]],['北館３階病棟','急性期・一般病棟',["s_cv", "s_gi"]],['北館４階病棟','急性期・一般病棟',["s_surg", "s_med"]],['北館５・６階病棟','急性期・一般病棟',["s_ortho", "s_med"]],
+ ['医療安全部門','急性期・外来その他',[],[1,3,1,2,3,0]],['外来センター','急性期・外来その他',['s_onc']],['連C:地域医療連携ｾﾝﾀｰ','急性期・外来その他',['s_home','s_rehab']],['連C:入退院センター','急性期・外来その他',['s_home','s_rehab']],['救C:ER一般外来','急性期・外来その他',['s_er'],[2,1,3,2,2,2]],['救C:放射線科','急性期・外来その他',['s_cv']],['手術室','急性期・外来その他',['s_ope'],[2,1,3,1,2,1]],['透析室','急性期・外来その他',['s_dial']],
+ ['メンタル５階病棟','精神科・病棟',['s_psy']],['ﾒﾝ外:メンタル外来','精神科・外来',['s_psy']],
+ ['ｵﾙｿﾘﾊ3階病棟','地域包括ケア・病棟',['s_ortho','s_rehab']],['ｵﾙｿﾘﾊ4階病棟','地域包括ケア・病棟',['s_ortho','s_rehab']],['ｵﾙｿﾘﾊ外来','地域包括ケア・外来その他',['s_ortho']],
+ ['リハ３階病棟','回復期リハ・病棟',['s_rehab','s_neuro']],['リハ４階病棟','回復期リハ・病棟',['s_rehab','s_neuro']],['リハ５階病棟','回復期リハ・病棟',['s_rehab','s_neuro']],['リハ６階病棟','回復期リハ・病棟',['s_rehab','s_neuro']],['リハ外来','回復期リハ・外来その他',['s_rehab']],
+ ['訪問看護ちかもり','訪問看護',['s_home']],['訪問看護ラポール','訪問看護',['s_home']],
+ ['看護部長室','急性期・外来その他',[],[1,3,1,3,3,0],0],['リハ看護部長室','回復期リハ・外来その他',[],[1,3,1,3,3,0],0],['ｵﾙｿﾘﾊ看護部長室','回復期リハ・外来その他',[],[1,3,1,3,3,0],0]
+].map((x,i)=>({id:'k'+(i+1),name:x[0],group:x[1],dom:x[2],w:[...(x[3]||GW[x[1]])],cap:x[4]??(x[1]==='急性期・集中病棟'?2:1)}));
+const MODE=document.documentElement.dataset.mode==='r'?'r':'a';
+const KEY=MODE==='r'?'nurseSkillMap.resp1':'nurseSkillMap.v1';
+let S;
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=s=>document.querySelector(s);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const r0=x=>Math.round(x);
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){try{const t=localStorage.getItem(KEY);if(t)return JSON.parse(t)}catch(e){}return null}
+// ---------- scoring ----------
+function avgOf(n,ids){const v=ids.map(i=>n.a[i]).filter(x=>x!=null&&x!=='');return v.length?v.reduce((a,b)=>a+ +b,0)/(ids.length*4)*100:0}
+function score(n){
+ const lv=SPEC.map(s=>+(n.a[s[0]]??0)).sort((a,b)=>b-a);
+ const spec=Math.min(100,(0.6*lv[0]+0.4*lv[1])/4*100*0.8+(QUAL[n.qual||0]||QUAL[0])[1]);
+ const y=+n.years||0,dc=Math.max(1,+n.deptCount||1);
+ const exp=Math.min(100,100*(1-Math.exp(-y/5))*0.85+Math.min(dc-1,3)*5);
+ const v={basic:avgOf(n,BASIC.map(q=>q[0])),hosp:avgOf(n,S.hosp.map(q=>q[0])),spec,exp,nontech:avgOf(n,NONTECH.map(q=>q[0])),night:avgOf(n,['nt1',...NIGHT.map(q=>q[0])])};
+ const arr=AX.map(a=>v[a.k]);v.arr=arr;v.total=arr.reduce((a,b)=>a+b,0)/6;return v}
+function level(t){return t>=80?'Ⅴ相当':t>=65?'Ⅳ相当':t>=50?'Ⅲ相当':t>=32?'Ⅱ相当':'Ⅰ相当'}
+function fit(n,d,sc){sc=sc||score(n);const ws=d.w.reduce((a,b)=>a+b,0)||1;const ax=d.w.reduce((a,w,i)=>a+w*sc.arr[i],0)/ws;
+ const dom=d.dom.length?d.dom.reduce((a,id)=>a+(+(n.a[id]??0)),0)/(d.dom.length*4)*100:ax;
+ let f=0.6*ax+0.4*dom;const nightReq=d.w[5]>=2;if(nightReq&&(+n.navail||0)===0)f*=0.7;return f}
+function nightLeader(n){return (+(n.a.nt1??0))>=3&&(+n.navail||0)>0}
+// ---------- sample data ----------
+function sample(){
+ let seed=7;const rnd=()=>(seed=seed*16807%2147483647)/2147483647;
+ const sn=['青木','石川','上田','岡本','川口','木村','小林','坂本','清水','高橋','田中','中村','西田','野口','橋本','藤井','松本','森','山口','渡辺'],gn=['美咲','由香','真理','さくら','彩','千尋','遥','舞','恵','優子','奈々','葵','結衣','香織','理沙','亜美','智子','加奈','紗希','瞳','翔太','健','大輔','誠'];
+ const pool=DEF_DEPT.filter(d=>d.cap>0);
+ return Array.from({length:40},(_,i)=>{const nm=sn[i%20]+' '+gn[(i*7+Math.floor(i/20)*5)%24];const d=pool[i%pool.length];const yrs=1+Math.floor(rnd()**1.3*22);const g=Math.min(1,yrs/12);
+  const pick=b=>Math.max(0,Math.min(4,Math.round(b+(rnd()-.5)*1.6)));const a={};
+  BASIC.forEach(q=>a[q[0]]=pick(1.4+2.4*g));DEF_HOSP.forEach(q=>a[q[0]]=pick(.8+2.6*g));
+  SPEC.forEach(q=>a[q[0]]=pick(rnd()*1.4*g));const main=d.dom[0]||SPEC[Math.floor(rnd()*SPEC.length)][0];a[main]=pick(1.2+2.8*g);
+  if(rnd()<.35)a[SPEC[Math.floor(rnd()*SPEC.length)][0]]=pick(1+2.5*g);
+  NONTECH.forEach(q=>a[q[0]]=pick(1+2.4*g+(rnd()-.5)));a.nt1=Math.min(4,Math.floor(g*4.6));NIGHT.forEach(q=>a[q[0]]=pick(.8+2.8*g));
+  const q=yrs>12&&rnd()<.4?(rnd()<.5?3:2):(yrs>6&&rnd()<.3?1:0);
+  return{id:uid(),name:nm,dept:d.name,years:yrs,deptCount:1+Math.floor(rnd()*Math.min(4,yrs/4+1)),curYears:Math.max(1,Math.floor(yrs*rnd())),qual:q,navail:d.w[5]===0&&rnd()<.3?0:rnd()<.12?0:1+Math.floor(rnd()*3),a,sample:true,updated:'2026-11-01'}})}
+S=load();
+if(!S||!S.nurses){S={v:2,hosp:DEF_HOSP.map(x=>[...x]),depts:JSON.parse(JSON.stringify(DEF_DEPT)),nurses:[],stay:8};S.nurses=MODE==='r'?[]:sample();save()}
+if(MODE==='a'&&!S.depts.some(d=>d.group)){S.depts=JSON.parse(JSON.stringify(DEF_DEPT));S.nurses=S.nurses.filter(n=>!n.sample).concat(sample());save()}
+if(MODE==='a'&&(S.v||0)<2){S.depts.forEach(d=>{const df=DEF_DEPT.find(x=>x.name===d.name);if(df&&!d.dom.length)d.dom=[...df.dom]});S.nurses=S.nurses.filter(n=>!n.sample).concat(sample());S.v=2;save()}
+const grpOf=name=>(S.depts.find(d=>d.name===name)||{}).group||'未設定';
+const deptOpts=sel=>{const gs=[...new Set([...GROUPS,...S.depts.map(d=>d.group||'未設定')])];return gs.map(g=>{const ds=S.depts.filter(d=>(d.group||'未設定')===g);return ds.length?`<optgroup label="${esc(g)}">${ds.map(d=>`<option ${d.name===sel?'selected':''}>${esc(d.name)}</option>`).join('')}</optgroup>`:''}).join('')};
+// ---------- radar ----------
+const RO=[];
+function radar(box,series,opt={}){
+ const s=document.createElementNS('http://www.w3.org/2000/svg','svg');box.innerHTML='';box.appendChild(s);s.setAttribute('role','img');
+ s.setAttribute('aria-label',series.map(x=>x.name+'：'+AX.map((a,i)=>a.n+r0(x.v[i])).join('、')).join(' / '));
+ const draw=()=>{const W=s.clientWidth,H=s.clientHeight;if(!W)return;const small=W<420;const lab=AX.map(a=>small?a.s:a.n);
+  const cx=W/2,cy=H/2+4,R=Math.max(40,Math.min(W/2-(small?70:100),H/2-40));const pt=(i,v)=>{const t=-Math.PI/2+i*Math.PI/3;return[cx+Math.cos(t)*R*v/100,cy+Math.sin(t)*R*v/100]};
+  let h='';[20,40,60,80,100].forEach(g=>{h+=`<polygon points="${AX.map((_,i)=>pt(i,g).join(',')).join(' ')}" fill="none" stroke="var(--line)" stroke-width="${g===100?1.5:1}"/>`});
+  AX.forEach((_,i)=>{const p=pt(i,100);h+=`<line x1="${cx}" y1="${cy}" x2="${p[0]}" y2="${p[1]}" stroke="var(--line)"/>`});
+  [50,100].forEach(g=>h+=`<text x="${cx+4}" y="${cy-R*g/100+12}" font-size="11" fill="var(--sub)">${g}</text>`);
+  series.forEach((sr,k)=>{const P=sr.v.map((v,i)=>pt(i,Math.max(2,v)));h+=`<polygon class="${k===0&&opt.grow?'grow':''}" style="transform-origin:${cx}px ${cy}px" points="${P.map(p=>p.join(',')).join(' ')}" fill="${sr.c}" fill-opacity="${series.length>1?.08:.18}" stroke="${sr.c}" stroke-width="2" stroke-linejoin="round"/>`;
+   P.forEach((p,i)=>h+=`<circle cx="${p[0]}" cy="${p[1]}" r="4.5" fill="${sr.c}" stroke="var(--bg)" stroke-width="2"/><circle data-t="${esc(sr.name)}｜${AX[i].n} ${r0(sr.v[i])}点" cx="${p[0]}" cy="${p[1]}" r="14" fill="transparent"/>`)});
+  AX.forEach((a,i)=>{const p=pt(i,100),dx=p[0]-cx,anc=Math.abs(dx)<5?'middle':dx>0?'start':'end';const ox=anc==='start'?10:anc==='end'?-10:0,oy=Math.abs(dx)<5?(p[1]<cy?-12:22):5;
+   const val=series.length===1?` ${r0(series[0].v[i])}`:'';h+=`<text x="${p[0]+ox}" y="${p[1]+oy}" text-anchor="${anc}" font-size="${small?12:14}" fill="var(--ink)" font-weight="500">${lab[i]}<tspan font-weight="700" fill="var(--ink)">${val}</tspan></text>`});
+  s.innerHTML=h};
+ const ro=new ResizeObserver(draw);ro.observe(s);RO.push(ro);draw()}
+if(MODE==='r')$('#nav').innerHTML='<a href="#home" data-r="home">ホーム</a><a href="#assess" data-r="assess">スキル評価</a><a href="#mine" data-r="mine">自分の結果</a>';
+const tip=$('#tip');
+document.addEventListener('mousemove',e=>{const t=e.target.closest&&e.target.closest('[data-t]');if(t){tip.textContent=t.dataset.t;tip.style.opacity=1;tip.style.left=Math.min(innerWidth-270,e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px'}else tip.style.opacity=0});
+const barsHTML=(arr,lowMark)=>`<div class="bars">${AX.map((a,i)=>`<div class="bar ${lowMark&&lowMark.includes(i)?'low':''}"><span>${a.n}</span><span class="t"><i style="width:${Math.max(1,arr[i])}%"></i></span><span class="v">${r0(arr[i])}</span></div>`).join('')}</div>`;
+const spark=arr=>`<span class="spark" data-t="${AX.map((a,i)=>a.s+' '+r0(arr[i])).join(' / ')}">${arr.map(v=>`<i style="height:${Math.max(2,v*.26)}px"></i>`).join('')}</span>`;
+function bestDepts(n,sc){return S.depts.map(d=>({d,f:fit(n,d,sc)})).sort((a,b)=>b.f-a.f)}
+// ---------- views ----------
+function vList(){
+ const N=S.nurses;const scs=N.map(score);const app=$('#app');
+ if(!N.length){app.innerHTML=`<div class="panel"><h2>まだ評価が登録されていません</h2><p>「スキル評価」から1人目を登録するか、設定でサンプルデータを読み込んでください。</p><a class="btn pri" href="#assess" style="display:inline-block;text-decoration:none">評価をはじめる</a></div>`;return}
+ const avg=AX.map((_,i)=>scs.reduce((a,s)=>a+s.arr[i],0)/N.length);const tot=avg.reduce((a,b)=>a+b,0)/6;
+ const order=avg.map((v,i)=>i).sort((a,b)=>avg[a]-avg[b]);const weak=order[0],strong=order[5];
+ const leaders=N.filter(nightLeader).length;const deps=[...new Set(N.map(n=>n.dept))];
+ app.innerHTML=`<div class="grid2"><div><h2>組織の総合力は平均${r0(tot)}点。伸びしろは「${AX[weak].n}」</h2>
+ <p class="muted">登録${N.length}名の平均。最も高いのは「${AX[strong].n}」（${r0(avg[strong])}点）。</p><div class="panel" style="margin-top:12px"><div class="fig" id="orgR"></div></div></div>
+ <div><div class="kpis"><div class="kpi"><b>${N.length}名</b><span>評価登録数</span></div><div class="kpi"><b>${r0(tot)}</b><span>平均総合力（100点満点）</span></div><div class="kpi"><b>${leaders}名</b><span>夜勤リーダーを担える人</span></div><div class="kpi"><b>${N.filter(n=>(n.qual||0)>=2).length}名</b><span>特定行為・認定・専門</span></div></div>
+ <h3 style="margin:18px 0 10px">領域別の平均</h3>${barsHTML(avg,[weak])}
+ <p class="note">赤は組織で最も低い領域。研修計画の優先度づけの目安に。</p></div></div>
+ <h2 style="margin-top:36px">看護師一覧</h2>
+ <div class="tools"><input id="q" placeholder="氏名で検索" aria-label="氏名で検索"><select id="fd" aria-label="部署で絞り込み"><option value="">すべての部署</option>${deps.map(d=>`<option>${esc(d)}</option>`).join('')}</select><a class="btn pri" href="#assess" style="text-decoration:none;display:inline-flex;align-items:center">＋ 新しく評価する</a></div>
+ <div class="scroll"><table id="tbl"><thead><tr><th>氏名</th><th>現所属</th><th class="n">総合</th><th class="hide-s">6領域</th><th class="hide-s">目安</th><th>得意な領域</th></tr></thead><tbody></tbody></table></div>
+ ${N.some(n=>n.sample)?'<p class="note">表示中の看護師は架空のサンプルデータです。設定からまとめて削除できます。</p>':''}`;
+ radar($('#orgR'),[{name:'組織平均',v:avg,c:'var(--s1)'}]);
+ const rows=()=>{const q=$('#q').value.trim(),fd=$('#fd').value;
+  $('#tbl tbody').innerHTML=N.map((n,i)=>({n,s:scs[i]})).filter(x=>(!q||x.n.name.includes(q))&&(!fd||x.n.dept===fd)).sort((a,b)=>b.s.total-a.s.total).map(({n,s})=>{const ti=s.arr.indexOf(Math.max(...s.arr));
+   return`<tr class="click" data-id="${esc(n.id)}" tabindex="0"><td><b>${esc(n.name)}</b>${(+n.navail||0)===0?' <span class="tag bad">夜勤不可</span>':''}</td><td>${esc(n.dept)}</td><td class="n"><b>${r0(s.total)}</b></td><td class="hide-s">${spark(s.arr)}</td><td class="hide-s">${level(s.total)}</td><td>${AX[ti].n} <span class="muted">${r0(s.arr[ti])}</span></td></tr>`}).join('')||'<tr><td colspan="6" class="muted">該当者がいません</td></tr>'};
+ rows();$('#q').oninput=rows;$('#fd').onchange=rows;
+ $('#tbl').onclick=e=>{const tr=e.target.closest('tr[data-id]');if(tr)location.hash='nurse-'+tr.dataset.id};
+ $('#tbl').onkeydown=e=>{if(e.key==='Enter'){const tr=e.target.closest('tr[data-id]');if(tr)location.hash='nurse-'+tr.dataset.id}};
+}
+function encodeCode(n){const o={id:n.id,name:n.name,dept:n.dept,years:n.years,deptCount:n.deptCount,curYears:n.curYears,qual:n.qual,navail:n.navail,a:n.a,updated:n.updated};return'NSK1:'+btoa(unescape(encodeURIComponent(JSON.stringify(o))))}
+function decodeCodes(t){const m=t.match(/NSK1:[A-Za-z0-9+/=]+/g)||[];let c=0;m.forEach(k=>{try{const o=JSON.parse(decodeURIComponent(escape(atob(k.slice(5)))));if(!o||typeof o.name!=='string'||!o.name.trim())return;
+ const a={};Object.keys(o.a||{}).forEach(q=>{const v=+o.a[q];if(!isNaN(v))a[q]=Math.max(0,Math.min(4,v))});
+ const rec={id:String(o.id||uid()).slice(0,40),name:o.name.slice(0,60),dept:String(o.dept||'').slice(0,60),years:+o.years||0,deptCount:+o.deptCount||1,curYears:+o.curYears||0,qual:Math.max(0,Math.min(QUAL.length-1,+o.qual||0)),navail:Math.max(0,Math.min(3,+o.navail||0)),a,updated:String(o.updated||'').slice(0,10)};
+ const k2=S.nurses.findIndex(x=>x.id===rec.id);if(k2>=0)S.nurses[k2]=rec;else S.nurses.push(rec);c++}catch(e){}});save();return c}
+function vNurse(id){
+ const n=S.nurses.find(x=>x.id===id);const app=$('#app');if(!n){location.hash=MODE==='r'?'home':'list';return}
+ const s=score(n);const ord=s.arr.map((v,i)=>i).sort((a,b)=>s.arr[b]-s.arr[a]);const top=ord.slice(0,2),low=ord.slice(-2).reverse();
+ const others=S.nurses.filter(x=>x.id!==id);
+ const sum=s.arr.reduce((x,y)=>x+y,0);
+ const secs=[{t:'基礎スキル一覧',q:BASIC,st:1},{t:'病院独自スキル一覧',q:S.hosp,st:2},{t:'専門スキル一覧',q:SPEC,st:3,only:true},{t:'ノンテクスキル一覧',q:NONTECH,st:4},{t:'夜勤対応力一覧',q:[['nt1'],...NIGHT],st:5}];
+ const dots=(v,c)=>`<span class="dots" aria-label="レベル${v}">${[1,2,3,4].map(k=>k===v?`<i class="on" style="background:${c}">${v}</i>`:'<i></i>').join('')}</span>`;
+ const secHTML=(x,si)=>{let items=x.q.map((q,i)=>({q,i,v:n.a[q[0]]}));if(x.only)items=items.filter(o=>+o.v>0);
+  const rows=items.map(({q,v},k)=>{const ci=(k+si*3)%PILL.length;return`<div class="sk"><div class="pill" style="background:${PILL[ci]}">${esc(shortOf(q))}</div>${dots(+v||0,DOTC[ci])}</div>`}).join('');
+  return`<div class="panel skl"><div class="hd"><b>${x.t}</b><span class="cnt">${items.length}</span></div>${rows||'<p class="muted" style="text-align:center">まだ登録された領域がありません</p>'}
+  <button class="redo" data-step="${x.st}">✎ この領域を再評価する</button></div>`};
+ app.innerHTML=`<section class="hero"><p class="adm" style="margin:0 0 8px;text-align:left"><a href="#list" style="color:#fff">← 一覧へ戻る</a></p><span class="name">${esc(n.name)}</span><p style="margin:10px 0 0;font-weight:700">総合力</p>
+ <p class="big grow">${r0(sum)}<small> / 600</small></p>
+ <div class="chips"><div class="chip"><span>所属</span><b>${esc(n.dept)}</b></div><div class="chip"><span>経験年数</span><b>${esc(n.years)}年</b></div><div class="chip"><span>ラダー目安</span><b>${level(s.total)}</b></div><div class="chip"><span>夜勤</span><b>${esc(NAVAIL[+n.navail||0].replace('（0回）',''))}</b></div></div></section>
+ <div class="grid2"><div class="panel"><h3 style="text-align:center">総合力グラフ</h3><div class="fig" id="pR"></div>
+ <div class="tools adm" style="justify-content:center"><span class="muted">比較：</span><select id="c1" aria-label="比較する看護師1"><option value="">比較なし</option>${others.map(o=>`<option value="${esc(o.id)}">${esc(o.name)}</option>`).join('')}</select><select id="c2" aria-label="比較する看護師2"><option value="">比較なし</option>${others.map(o=>`<option value="${esc(o.id)}">${esc(o.name)}</option>`).join('')}</select></div>
+ <div class="legend" id="lg" style="justify-content:center"></div></div>
+ <div style="display:grid;gap:18px"><div class="panel"><div class="sgrid">${AX.map((ax,i)=>`<div class="${low.includes(i)&&s.arr[i]<60?'low':''}"><span>${ax.n}</span><b>${r0(s.arr[i])}</b></div>`).join('')}</div></div>
+ <div class="panel adm"><h3 style="margin:0 0 8px">強み</h3><p style="margin:0">${top.map(i=>`<b>${AX[i].n}</b>（${r0(s.arr[i])}点）`).join('、')}</p>
+ <h3 style="margin:16px 0 8px">育成の課題と打ち手</h3><ul style="margin:0;padding-left:1.2em">${low.map(i=>`<li><b>${AX[i].n}</b>（${r0(s.arr[i])}点）：${ADV[AX[i].k]}</li>`).join('')}</ul>
+</div></div></div>
+ <h2 style="margin:34px 0 14px">スキルの内訳</h2><div class="cols3">${secs.map(secHTML).join('')}</div>
+ <div class="tools" style="margin-top:22px"><a class="btn pri" href="#assess-${esc(n.id)}" style="text-decoration:none;display:inline-flex;align-items:center">全項目を見直す・再評価</a><button class="warn adm" id="del">この評価を削除</button></div><div id="delbox"></div>`;
+ app.querySelectorAll('.redo').forEach(b=>b.onclick=()=>{D=null;step=+b.dataset.step;location.hash='assess-'+n.id});
+ const C=['var(--s1)','var(--s2)','var(--s3)'];
+ const upd=()=>{const ser=[{name:n.name,v:s.arr,c:C[0]}];[$('#c1').value,$('#c2').value].forEach((cid,k)=>{const o=S.nurses.find(x=>x.id===cid);if(o)ser.push({name:o.name,v:score(o).arr,c:C[ser.length]})});
+  radar($('#pR'),ser,{grow:ser.length===1});$('#lg').innerHTML=ser.length>1?ser.map(x=>`<span><i style="background:${x.c}"></i>${esc(x.name)} ${r0(x.v.reduce((a,b)=>a+b,0)/6)}点</span>`).join(''):''};
+ upd();$('#c1').onchange=upd;$('#c2').onchange=upd;
+ if(MODE==='r'){app.querySelectorAll('.adm').forEach(e=>e.remove());app.querySelectorAll('.sgrid .low').forEach(e=>e.classList.remove('low'));
+  const code=encodeCode(n);const box=document.createElement('div');box.className='panel';
+  box.innerHTML=`<h3 style="margin:0 0 6px">管理者へ結果を送る</h3><p>「回答コードをコピー」を押して、管理者から案内された方法（院内メールなど）で貼り付けて送ってください。コードには氏名と回答内容が含まれます。</p><textarea id="code" readonly aria-label="回答コード" style="min-height:90px"></textarea><div class="tools"><button class="pri" id="cpc">回答コードをコピー</button>${DL?'<button id="dlc">ファイルで保存</button>':''}<span id="cmsg" class="muted"></span></div><p class="note">共用のパソコンやタブレットで回答した場合は、送信後に下のボタンでこの端末から結果を消してください。</p><button class="warn" id="wipe">この端末から自分の結果を消す</button><div id="wbox"></div>`;
+  app.querySelector('.grid2>div:last-child').appendChild(box);$('#code').value=code;
+  $('#cpc').onclick=async()=>{try{await navigator.clipboard.writeText(code);$('#cmsg').textContent='コピーしました'}catch(e){$('#code').select();$('#cmsg').textContent='選択した状態です。Ctrl+C（⌘+C）でコピーしてください'}};
+  $('#wipe').onclick=()=>{$('#wbox').innerHTML='<div class="dlg" style="margin-top:10px"><span>回答コードを送りましたか？消すと元に戻せません。</span><button class="warn" id="wy">消す</button><button id="wn">やめる</button></div>';$('#wy').onclick=()=>{S.nurses=[];save();location.hash='home'};$('#wn').onclick=()=>$('#wbox').innerHTML=''};
+  if($('#dlc'))$('#dlc').onclick=async()=>{try{await DL.save({filename:'回答コード_'+n.name+'.txt',data:code});$('#cmsg').textContent='保存しました'}catch(e){$('#cmsg').textContent='保存できませんでした。コピーをご利用ください'}};}
+ if($('#del'))$('#del').onclick=()=>{$('#delbox').innerHTML=`<div class="dlg"><span>${esc(n.name)}さんの評価を削除しますか？</span><button class="warn" id="dy">削除する</button><button id="dn">やめる</button></div>`;
+  $('#dy').onclick=()=>{S.nurses=S.nurses.filter(x=>x.id!==id);save();location.hash='list'};$('#dn').onclick=()=>$('#delbox').innerHTML=''};
+}
+let D=null,step=0;
+function vAssess(id){
+ const ex=id&&S.nurses.find(x=>x.id===id);
+ if(!D||D._for!==(id||'new'))D=ex?JSON.parse(JSON.stringify(ex)):{id:null,name:'',dept:S.depts[0]?.name||'',years:'',deptCount:1,curYears:'',qual:0,navail:2,a:{}};D._for=id||'new';if(!ex&&D._for==='new'&&step>6)step=0;
+ const STEPS=[{t:'基本情報・経験',q:null},{t:'基礎スキル',q:BASIC,sc:SC_SKILL},{t:'病院独自スキル',q:S.hosp,sc:SC_HOSP},{t:'専門スキル',q:SPEC,sc:SC_SKILL},{t:'ノンテクニカル',q:NONTECH,sc:SC_FREQ},{t:'夜勤対応力',q:NIGHT,sc:SC_SKILL}];
+ const app=$('#app');const answered=st=>st.q?st.q.every(q=>D.a[q[0]]!=null):!!D.name;
+ const qHTML=(q,sc)=>`<div class="q"><p>${esc(q[1])}</p><div class="opts" role="radiogroup" aria-label="${esc(q[1])}">${sc.map((t,v)=>`<label class="opt"><input type="radio" name="${esc(q[0])}" value="${v}" ${+D.a[q[0]]===v&&D.a[q[0]]!=null?'checked':''}><b>${v}</b>${t}</label>`).join('')}</div></div>`;
+ const st=STEPS[step];let body='';
+ if(!st.q){body=`<div class="fields"><label class="field">氏名<input id="f_name" value="${esc(D.name)}" autocomplete="off"></label>
+  <label class="field">現在の所属部署<select id="f_dept">${deptOpts(D.dept)}</select></label>
+  <label class="field">看護師としての経験年数<input id="f_years" type="number" min="0" max="50" value="${esc(D.years)}"></label>
+  <label class="field">これまでの経験部署数（現部署含む）<input id="f_dc" type="number" min="1" max="20" value="${esc(D.deptCount)}"></label>
+  <label class="field">現部署での経験年数<input id="f_cy" type="number" min="0" max="50" value="${esc(D.curYears)}"></label>
+  <label class="field">資格・研修<select id="f_qual">${QUAL.map((q,i)=>`<option value="${i}" ${+D.qual===i?'selected':''}>${q[0]}</option>`).join('')}</select></label>
+  <label class="field">対応可能な夜勤回数（スコア外・配置条件）<select id="f_nav">${NAVAIL.map((t,i)=>`<option value="${i}" ${+D.navail===i?'selected':''}>${t}</option>`).join('')}</select></label></div>
+  <p class="note">経験年数と経験部署数から「経験年数」軸を自動計算します。夜勤回数は点数には入れず、夜勤が必要な部署への配置条件として使います。</p>`}
+ else{body=(step===5?qHTML(['nt1','夜勤での役割経験'],SC_NIGHT):'')+st.q.map(q=>qHTML(q,st.sc)).join('');if(step===2)body+='<p class="note">病院独自スキルの項目は「設定・データ」で自院のラダーや研修に合わせて編集できます。</p>';if(step===3)body='<p class="muted" style="margin:0">経験のある領域だけでなく、未経験の領域も「0」を選んでください。上位2領域と資格から専門スキル点を算出します。</p>'+body}
+ app.innerHTML=`<div class="grid2 ga"><div>
+ <h2>${ex?esc(ex.name)+'さんの再評価':'スキル評価'}</h2><p class="muted">基本情報と${BASIC.length+S.hosp.length+SPEC.length+NONTECH.length+NIGHT.length+1}問・約10分。各問いで今の自分に最も近いものを選んでください。</p>
+ <div class="steps">${STEPS.map((x,i)=>`<button data-s="${i}" class="${i===step?'on':''} ${answered(x)?'done':''}">${i+1}. ${x.t}</button>`).join('')}</div>
+ <h3>${step+1}. ${st.t}</h3><form id="frm">${body}</form><div id="msg"></div>
+ <div class="tools" style="justify-content:space-between"><button id="prev" ${step===0?'disabled':''}>← 前へ</button>${step<5?'<button class="pri" id="next">次へ →</button>':'<button class="pri" id="fin">評価を保存してチャートを見る</button>'}</div></div>
+ <div class="sticky"><div class="panel live"><span class="muted">回答の進み具合</span><br><b id="lt">0</b><span class="muted" id="ltot"> / 40 問</span>
+ <div class="bar" style="grid-template-columns:minmax(0,1fr);margin:12px 0 4px"><span class="t"><i id="lpb" style="width:0%"></i></span></div><p class="note" id="lc"></p>
+ <h3 style="margin:18px 0 8px">回答のしかた</h3><ul style="margin:0;padding-left:1.2em;font-size:15px;display:grid;gap:6px">
+ <li>今のあなたに一番近いものを選んでください。正解や良い・悪いはありません。</li>
+ <li>最近の実際の場面を思い浮かべると、選びやすくなります。</li>
+ <li>回答を全て終えると、スキルがスコア化されます。</li></ul></div></div></div>`;
+ const sync=()=>{if(!st.q){D.name=$('#f_name').value.trim();D.dept=$('#f_dept').value;D.years=$('#f_years').value;D.deptCount=$('#f_dc').value;D.curYears=$('#f_cy').value;D.qual=+$('#f_qual').value;D.navail=+$('#f_nav').value}};
+ const live=()=>{sync();
+  const tot=STEPS.reduce((a,x)=>a+(x.q?x.q.length:0),0)+1,done=Object.keys(D.a).filter(k=>D.a[k]!=null&&(k==='nt1'||STEPS.some(x=>x.q&&x.q.some(q=>q[0]===k)))).length;$('#lt').textContent=done;$('#ltot').textContent=` / ${tot} 問`;$('#lpb').style.width=(done/tot*100)+'%';$('#lc').textContent=done<tot?'未回答の問いは0点として計算されます。':'すべて回答しました。最後のステップで保存してください。'};
+ $('#frm').addEventListener('change',e=>{if(e.target.type==='radio')D.a[e.target.name]=+e.target.value;live()});$('#frm').addEventListener('input',live);
+ $('#frm').onsubmit=e=>e.preventDefault();live();
+ const go=i=>{sync();step=i;vAssess(id);scrollTo({top:0})};
+ document.querySelectorAll('.steps button').forEach(b=>b.onclick=()=>go(+b.dataset.s));
+ $('#prev').onclick=()=>go(step-1);if($('#next'))$('#next').onclick=()=>go(step+1);
+ if($('#fin'))$('#fin').onclick=()=>{sync();if(!D.name){$('#msg').innerHTML='<p style="color:var(--bad)">「基本情報・経験」で氏名を入力してください。</p>';return}
+  const rec={...D};delete rec._for;rec.updated=new Date().toISOString().slice(0,10);delete rec.sample;
+  if(MODE==='r'){rec.id=rec.id||uid();S.nurses=[rec];save();D=null;step=0;location.hash='mine';return}if(rec.id){S.nurses=S.nurses.map(x=>x.id===rec.id?rec:x)}else{rec.id=uid();S.nurses.push(rec)}save();D=null;step=0;location.hash='nurse-'+rec.id};
+}
+function skillCatalog(){const L=[];AX.forEach((a,i)=>L.push({id:'ax:'+i,label:a.n,kind:'ax',grp:'6つの領域（点数）'}));
+ [['専門スキル',SPEC],['基礎スキル',BASIC],['病院独自スキル',S.hosp],['ノンテクニカル',NONTECH],['夜勤対応力',[['nt1','夜勤での役割'],...NIGHT]]].forEach(([g,qs])=>qs.forEach(q=>L.push({id:'q:'+q[0],label:shortOf(q),kind:'q',grp:g})));return L}
+const AS={sk:'q:s_cv',th:3,grp:'',ex:'',night:false,tg:''};
+function vAnalysis(){
+ const N=S.nurses,app=$('#app');if(!N.length){app.innerHTML='<p>評価データがありません。</p>';return}
+ const scs=N.map(score);const avg=AX.map((_,i)=>scs.reduce((a,s)=>a+s.arr[i],0)/N.length);
+ const CAT=skillCatalog();const specName=id=>shortOf(SPEC.find(q=>q[0]===id)||[id,id]);
+ const depts=S.depts.map(d=>{const idx=N.map((n,i)=>i).filter(i=>N[i].dept===d.name);if(!idx.length)return null;
+  const av=AX.map((_,j)=>idx.reduce((a,i)=>a+scs[i].arr[j],0)/idx.length);
+  const cov=d.dom.map(id=>({id,c:idx.filter(i=>+(N[i].a[id]??0)>=3).length}));
+  const low=av.map((v,j)=>({j,d:v-avg[j]})).filter(x=>x.d<=-8).sort((a,b)=>a.d-b.d).slice(0,2).map(x=>x.j);
+  return{d,c:idx.length,av,cov,low,lead:idx.filter(i=>nightLeader(N[i])).length}}).filter(Boolean);
+ const noCov=depts.filter(x=>x.cov.some(c=>c.c===0));
+ const tint=(v,b)=>{const d=v-b;return d>=0?`background:color-mix(in srgb,var(--s1) ${Math.min(55,d*3)}%,var(--card))`:`background:color-mix(in srgb,var(--bad) ${Math.min(45,-d*2.5)}%,var(--card))`};
+ const groups=[...new Set(S.depts.map(d=>d.group||'未設定'))];
+ app.innerHTML=`<h2>専門領域の担い手がいない部署は ${noCov.length}部署</h2>
+ <p class="muted">登録${N.length}名・${depts.length}部署のスキルの偏りです。足りないスキルの札を押すと、そのスキルを持つ人を下で探せます。</p>
+ <div class="tools"><label for="tg" class="muted">部署グループ</label><select id="tg"><option value="">すべて</option>${groups.map(g=>`<option ${g===AS.tg?'selected':''}>${esc(g)}</option>`).join('')}</select>
+ <span class="legend"><span><i style="background:color-mix(in srgb,var(--s1) 45%,var(--card))"></i>組織平均より高い</span><span><i style="background:color-mix(in srgb,var(--bad) 35%,var(--card))"></i>組織平均より低い</span></span></div>
+ <div class="scroll"><table class="hm" id="dt"></table></div>
+ <p class="note">専門領域：その部署で必要な専門スキルについて、レベル3以上の人数（設定・データで部署ごとに変更できます）。足りないスキル：担い手が0人の専門領域と、組織平均より8点以上低い領域（低い順に最大2つ）。</p>
+ <div class="panel" id="find" style="margin-top:30px"><h2 style="margin-bottom:6px">スキルを持つ人を探す</h2>
+ <div class="tools"><select id="sk" aria-label="探すスキル">${[...new Set(CAT.map(c=>c.grp))].map(g=>`<optgroup label="${esc(g)}">${CAT.filter(c=>c.grp===g).map(c=>`<option value="${esc(c.id)}" ${c.id===AS.sk?'selected':''}>${esc(c.label)}</option>`).join('')}</optgroup>`).join('')}</select>
+ <select id="th" aria-label="条件"></select>
+ <select id="sg" aria-label="所属で絞る"><option value="">すべての部署から</option>${groups.map(g=>`<option ${g===AS.grp?'selected':''}>${esc(g)}</option>`).join('')}</select>
+ <label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="nt" style="min-height:0;width:18px;height:18px" ${AS.night?'checked':''}>夜勤可の人のみ</label></div>
+ <div id="exb"></div><p id="fc" style="font-weight:700;margin:6px 0"></p><div class="scroll"><table id="ft"></table></div></div>`;
+ const drawD=()=>{AS.tg=$('#tg').value;save();const rows=depts.filter(x=>!AS.tg||(x.d.group||'未設定')===AS.tg);
+  $('#dt').innerHTML=`<thead><tr><th>部署</th><th class="n">人数</th>${AX.map(a=>`<th class="d">${a.s}</th>`).join('')}<th>専門領域（レベル3以上）</th><th class="n">夜勤リーダー可</th><th>足りないスキル</th></tr></thead><tbody>${rows.map(x=>`<tr><td style="white-space:nowrap"><b>${esc(x.d.name)}</b></td><td class="n">${x.c}</td>${x.av.map((v,j)=>`<td class="c" style="${tint(v,avg[j])}" data-t="${esc(x.d.name)}｜${AX[j].n} ${r0(v)}点（組織平均 ${r0(avg[j])}）">${r0(v)}</td>`).join('')}
+  <td style="min-width:11em">${x.cov.length?x.cov.map(c=>`<span class="tag ${c.c?'':'bad'}" style="margin:2px">${esc(specName(c.id))} ${c.c}名</span>`).join(''):'<span class="muted">未設定</span>'}</td><td class="n">${x.lead}名</td>
+  <td style="min-width:12em">${[...x.cov.filter(c=>!c.c).map(c=>`<button class="tag bad gap" data-sk="q:${esc(c.id)}" data-th="3" data-ex="${esc(x.d.name)}" style="min-height:32px;margin:2px;cursor:pointer">${esc(specName(c.id))}を探す</button>`),...x.low.map(j=>`<button class="tag gap" data-sk="ax:${j}" data-th="70" data-ex="${esc(x.d.name)}" style="min-height:32px;margin:2px;cursor:pointer">${AX[j].s}を探す</button>`)].join('')||'<span class="muted">目立った偏りなし</span>'}</td></tr>`).join('')}</tbody>`};
+ const thOpts=()=>{const c=CAT.find(x=>x.id===$('#sk').value);const o=c.kind==='ax'?[[60,'60点以上'],[70,'70点以上'],[80,'80点以上']]:[[2,'レベル2以上'],[3,'レベル3以上'],[4,'レベル4']];
+  if(!o.some(x=>x[0]==AS.th))AS.th=o[1][0];$('#th').innerHTML=o.map(x=>`<option value="${x[0]}" ${x[0]==AS.th?'selected':''}>${x[1]}</option>`).join('')};
+ const find=()=>{AS.sk=$('#sk').value;AS.th=+$('#th').value;AS.grp=$('#sg').value;AS.night=$('#nt').checked;const c=CAT.find(x=>x.id===AS.sk);
+  const val=(n,i)=>c.kind==='ax'?scs[i].arr[+AS.sk.slice(3)]:+(n.a[AS.sk.slice(2)]??0);
+  const hit=N.map((n,i)=>({n,i,v:val(n,i)})).filter(x=>x.v>=AS.th&&(!AS.grp||grpOf(x.n.dept)===AS.grp)&&(!AS.ex||x.n.dept!==AS.ex)&&(!AS.night||(+x.n.navail||0)>0)).sort((a,b)=>b.v-a.v||scs[b.i].total-scs[a.i].total);
+  $('#exb').innerHTML=AS.ex?`<span class="tag" style="padding:6px 12px">${esc(AS.ex)} 以外から探しています <button id="exx" style="min-height:0;padding:0 6px;border:0;background:none;cursor:pointer" aria-label="条件を外す">✕</button></span>`:'';if($('#exx'))$('#exx').onclick=()=>{AS.ex='';find()};
+  $('#fc').textContent=`「${c.label}」${$('#th').selectedOptions[0].text}の人：${hit.length}名`;
+  $('#ft').innerHTML=hit.length?`<thead><tr><th>氏名</th><th>現所属</th><th class="hide-s">部署グループ</th><th class="n">${c.kind==='ax'?'点数':'レベル'}</th><th class="n">総合</th><th class="n hide-s">経験</th><th>夜勤</th></tr></thead><tbody>${hit.map(({n,i,v})=>`<tr class="click" data-id="${esc(n.id)}" tabindex="0"><td><b>${esc(n.name)}</b></td><td>${esc(n.dept)}</td><td class="hide-s muted">${esc(grpOf(n.dept))}</td><td class="n"><b style="color:var(--hot)">${c.kind==='ax'?r0(v):v}</b></td><td class="n">${r0(scs[i].total)}</td><td class="n hide-s">${esc(n.years)}年</td><td>${(+n.navail||0)?esc(NAVAIL[+n.navail]):'<span class="tag bad">不可</span>'}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="muted">条件に合う人がいません。条件をゆるめてみてください。</td></tr></tbody>';save()};
+ drawD();thOpts();find();
+ $('#tg').onchange=drawD;$('#sk').onchange=()=>{thOpts();find()};$('#th').onchange=find;$('#sg').onchange=find;$('#nt').onchange=find;
+ $('#dt').onclick=e=>{const b=e.target.closest('.gap');if(!b)return;AS.sk=b.dataset.sk;AS.th=+b.dataset.th;AS.ex=b.dataset.ex;AS.grp='';$('#sk').value=AS.sk;$('#sg').value='';thOpts();find();$('#find').scrollIntoView({behavior:'smooth',block:'start'})};
+ $('#ft').onclick=e=>{const tr=e.target.closest('tr[data-id]');if(tr)location.hash='nurse-'+tr.dataset.id};
+}
+// ---------- CSV ----------
+function qids(){return[...BASIC,...S.hosp,...SPEC,...NONTECH,['nt1'],...NIGHT].map(q=>q[0])}
+function toCSV(){const ids=qids();const head=['id','氏名','所属部署','部署グループ','経験年数','経験部署数','現部署年数','資格','夜勤可能回数','更新日',...ids,...AX.map(a=>a.n),'総合力'];
+ const c=v=>{v=String(v??'');return/[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+ return[head,...S.nurses.map(n=>{const s=score(n);return[n.id,n.name,n.dept,grpOf(n.dept),n.years,n.deptCount,n.curYears,QUAL[n.qual||0][0],NAVAIL[+n.navail||0],n.updated,...ids.map(i=>n.a[i]??''),...s.arr.map(r0),r0(s.total)]})].map(r=>r.map(c).join(',')).join('\n')}
+function parseCSV(t){const rows=[];let r=[],f='',q=false;t=t.replace(/^﻿/,'');for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=ch}else if(ch==='"')q=true;else if(ch===','){r.push(f);f=''}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;r.push(f);rows.push(r);r=[];f=''}else f+=ch}if(f||r.length){r.push(f);rows.push(r)}return rows.filter(x=>x.some(v=>v!==''))}
+function fromCSV(t){const rows=parseCSV(t);if(rows.length<2)throw new Error('データ行がありません');const h=rows[0];const ix=k=>h.indexOf(k);if(ix('氏名')<0)throw new Error('「氏名」列が見つかりません');const ids=qids();let cnt=0;
+ rows.slice(1).forEach(r=>{const g=k=>ix(k)>=0?r[ix(k)]:'';const a={};ids.forEach(id=>{const v=g(id);if(v!==''&&!isNaN(+v))a[id]=Math.max(0,Math.min(4,+v))});
+  const rec={id:g('id')||uid(),name:g('氏名'),dept:g('所属部署'),years:+g('経験年数')||0,deptCount:+g('経験部署数')||1,curYears:+g('現部署年数')||0,qual:Math.max(0,QUAL.findIndex(q=>q[0]===g('資格'))),navail:Math.max(0,NAVAIL.indexOf(g('夜勤可能回数'))),updated:g('更新日')||new Date().toISOString().slice(0,10),a};
+  if(!rec.name)return;const k=S.nurses.findIndex(x=>x.id===rec.id);if(k>=0)S.nurses[k]=rec;else S.nurses.push(rec);cnt++});save();return cnt}
+let DL=null;
+function vSettings(){
+ const app=$('#app');
+ app.innerHTML=`<div class="grid2"><div><h2>病院独自スキルの項目</h2><p class="muted">自院のクリニカルラダーや必須研修に合わせて編集してください。初期値は急性期病院を想定したサンプルです。</p>
+ <div id="hl" style="display:grid;gap:8px"></div><div class="tools"><button id="hadd">＋ 項目を追加</button><button class="pri" id="hsave">項目を保存</button><span id="hmsg" class="muted"></span></div>
+ <h2 style="margin-top:30px">データの入出力</h2><p class="muted">データはこのブラウザ内にのみ保存され、外部には送信されません。別のPCで使う場合や保管用にCSVで出力してください（Excelで開けます）。</p>
+ <div class="tools"><button class="pri" id="dl" hidden>CSVをダウンロード</button><button id="cp">CSVをコピー</button><label class="btn" style="display:inline-flex;align-items:center">CSVファイルを読み込む<input type="file" id="fi" accept=".csv,text/csv" hidden></label></div>
+ <textarea id="ta" aria-label="CSVテキスト" placeholder="看護師さんから届いた回答コード（NSK1:で始まる文字列、複数可）またはCSVを貼り付けて「取り込む」を押してください"></textarea>
+ <div class="tools"><button class="pri" id="imp">回答コード・CSVを取り込む</button><span id="imsg" class="muted"></span></div>
+ <h2 style="margin-top:30px">リセット</h2><div class="tools"><button id="rsSample">サンプルデータのみ削除</button><button id="rsLoad">サンプルデータを追加</button><button class="warn" id="rsAll">全データを削除</button></div><div id="rbox"></div></div>
+ <div><h2>部署と専門領域</h2><p class="muted">部署グループと、その部署で必要な専門スキルを設定します。「部署のスキル分析」で、この専門領域の担い手（レベル3以上）がいるかを確認します。</p><div id="dl2" style="display:grid;gap:12px"></div>
+ <div class="tools"><button id="dadd">＋ 部署を追加</button><button class="pri" id="dsave">部署設定を保存</button><span id="dmsg" class="muted"></span></div></div></div>`;
+ const hl=$('#hl');let H=S.hosp.map(x=>[...x]);
+ const rh=()=>{hl.innerHTML=H.map((h,i)=>`<div style="display:flex;gap:8px"><input data-i="${i}" value="${esc(h[1])}" style="flex:1" aria-label="項目${i+1}"><button data-x="${i}" aria-label="削除">✕</button></div>`).join('')};rh();
+ hl.oninput=e=>{if(e.target.dataset.i)H[+e.target.dataset.i][1]=e.target.value};hl.onclick=e=>{if(e.target.dataset.x){H.splice(+e.target.dataset.x,1);rh()}};
+ $('#hadd').onclick=()=>{H.push(['h_'+uid(),'']);rh();hl.querySelector('input:last-of-type')};
+ $('#hsave').onclick=()=>{S.hosp=H.filter(h=>h[1].trim());save();$('#hmsg').textContent='保存しました'};
+ let DP=JSON.parse(JSON.stringify(S.depts));const dl2=$('#dl2');
+ const rd=()=>{dl2.innerHTML=DP.map((d,i)=>`<div class="deptcard" data-i="${i}"><div style="display:flex;gap:8px;flex-wrap:wrap"><input data-f="name" value="${esc(d.name)}" style="flex:1 1 10em" aria-label="部署名"><select data-f="group" aria-label="部署グループ" style="flex:1 1 10em">${[...new Set([...GROUPS,d.group||'未設定'])].map(g=>`<option ${g===d.group?'selected':''}>${esc(g)}</option>`).join('')}</select><button data-x="1" aria-label="部署を削除">✕</button></div>
+
+  <div class="chk">${SPEC.map(s=>`<label><input type="checkbox" data-d="${s[0]}" ${d.dom.includes(s[0])?'checked':''}>${esc(s[1].split('（')[0])}</label>`).join('')}</div></div>`).join('')};rd();
+ dl2.oninput=dl2.onchange=e=>{const c=e.target.closest('.deptcard');if(!c)return;const d=DP[+c.dataset.i],t=e.target;
+  if(t.dataset.f==='name')d.name=t.value;if(t.dataset.f==='group')d.group=t.value;if(t.dataset.f==='cap')d.cap=+t.value;if(t.dataset.w)d.w[+t.dataset.w]=+t.value;if(t.dataset.d){d.dom=t.checked?[...new Set([...d.dom,t.dataset.d])]:d.dom.filter(x=>x!==t.dataset.d)}};
+ dl2.onclick=e=>{if(e.target.dataset.x){DP.splice(+e.target.closest('.deptcard').dataset.i,1);rd()}};
+ $('#dadd').onclick=()=>{DP.push({id:'d'+uid(),name:'新しい部署',group:GROUPS[1],cap:1,w:[2,2,2,1,2,2],dom:[]});rd()};
+ $('#dsave').onclick=()=>{const old=S.depts;S.depts=DP.filter(d=>d.name.trim());old.forEach(o=>{const nw=S.depts.find(d=>d.id===o.id);if(nw&&nw.name!==o.name)S.nurses.forEach(n=>{if(n.dept===o.name)n.dept=nw.name})});save();$('#dmsg').textContent='保存しました'};
+ $('#ta').value='';
+ $('#cp').onclick=async()=>{try{await navigator.clipboard.writeText(toCSV());$('#imsg').textContent='コピーしました'}catch(e){$('#ta').value=toCSV();$('#ta').select();$('#imsg').textContent='選択した状態です。Ctrl+C（⌘+C）でコピーしてください'}};
+ if(DL){$('#dl').hidden=false;$('#dl').onclick=async()=>{try{await DL.save({filename:'看護スキル評価_'+new Date().toISOString().slice(0,10)+'.csv',data:'﻿'+toCSV()});$('#imsg').textContent='ダウンロードしました'}catch(e){$('#imsg').textContent='ダウンロードできませんでした。コピーをご利用ください'}}}
+ const doImp=t=>{try{const c=t.includes('NSK1:')?decodeCodes(t):fromCSV(t);$('#imsg').textContent=c+'名を取り込みました'}catch(e){$('#imsg').textContent='取り込めませんでした：'+e.message}};
+ $('#imp').onclick=()=>doImp($('#ta').value);
+ $('#fi').setAttribute('accept','.csv,.txt,text/csv,text/plain');$('#fi').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{let t=rd.result;if(t.includes(String.fromCharCode(65533))){const r2=new FileReader();r2.onload=()=>doImp(r2.result);r2.readAsText(f,'shift_jis')}else doImp(t)};rd.readAsText(f,'utf-8')};
+ const conf=(msg,fn)=>{$('#rbox').innerHTML=`<div class="dlg"><span>${msg}</span><button class="warn" id="ry">実行する</button><button id="rn">やめる</button></div>`;$('#ry').onclick=()=>{fn();save();vSettings()};$('#rn').onclick=()=>$('#rbox').innerHTML=''};
+ $('#rsSample').onclick=()=>conf('サンプルデータ（架空の20名）を削除しますか？',()=>{S.nurses=S.nurses.filter(n=>!n.sample)});
+ $('#rsLoad').onclick=()=>conf('架空のサンプル20名を追加しますか？',()=>{S.nurses=S.nurses.filter(n=>!n.sample).concat(sample())});
+ $('#rsAll').onclick=()=>conf('すべての評価データを削除します。先にCSVで保存することをおすすめします。',()=>{S.nurses=[]});
+}
+// ---------- router ----------
+function vHome(){
+ const nq=BASIC.length+S.hosp.length+SPEC.length+NONTECH.length+NIGHT.length+1;
+ const rows=[['#9fd3fb','#2a8fe0',3],['#9fe6dc','#14a594',2],['#c3c9fa','#5b63e0',4],['#b8e6c4','#2e9e58',1]];
+ const hex=(cx,cy,R,vals)=>vals.map((v,i)=>{const t=-Math.PI/2+i*Math.PI/3;return(cx+Math.cos(t)*R*v).toFixed(1)+','+(cy+Math.sin(t)*R*v).toFixed(1)}).join(' ');
+ const V=[.86,.7,.62,.78,.9,.66];
+ const art=`<svg viewBox="0 0 640 400" role="img" aria-label="質問への回答がスコアになり、6角形のチャートに変わる様子">
+ <defs><linearGradient id="gR" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5ab8f0"/><stop offset="1" stop-color="#4a5ed8"/></linearGradient>
+ <linearGradient id="gB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eef4fc"/></linearGradient></defs>
+ <circle cx="120" cy="320" r="120" fill="#38b6e8" opacity=".10"/><circle cx="540" cy="70" r="90" fill="#4a55d6" opacity=".08"/>
+ <ellipse cx="135" cy="352" rx="96" ry="12" fill="#13223a" opacity=".10"/>
+ <g transform="rotate(-4 135 200)">
+  <rect x="46" y="62" width="178" height="282" rx="18" fill="#2f6fd6"/>
+  <rect x="56" y="74" width="158" height="262" rx="12" fill="url(#gB)"/>
+  <rect x="96" y="50" width="78" height="30" rx="10" fill="#1b4fae"/><circle cx="135" cy="58" r="6" fill="#9fd3fb"/>
+  <rect x="72" y="94" width="96" height="10" rx="5" fill="#c9d7ec"/>
+  ${rows.map((r,k)=>{const y=126+k*50;return`<rect x="70" y="${y}" width="66" height="26" rx="8" fill="${r[0]}"/><rect x="80" y="${y+10}" width="40" height="6" rx="3" fill="#ffffff" opacity=".9"/>${[0,1,2,3].map(j=>j+1===r[2]?`<circle cx="${152+j*15}" cy="${y+13}" r="9" fill="${r[1]}"/><path d="M${148+j*15} ${y+13} l3 3 l6 -6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`:`<circle cx="${152+j*15}" cy="${y+13}" r="5" fill="#d5dde8"/>`).join('')}`}).join('')}
+ </g>
+ <path d="M218 170 C 270 120, 320 230, 372 176" fill="none" stroke="#9cc4f5" stroke-width="4" stroke-dasharray="2 12" stroke-linecap="round"/>
+ <path d="M362 166 l14 10 l-16 6" fill="none" stroke="#5b8fe8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+ <circle class="flow" r="7" fill="#38b6e8"/><circle class="flow f2" r="6" fill="#14a594"/><circle class="flow f3" r="6" fill="#5b63e0"/>
+ <ellipse cx="478" cy="330" rx="110" ry="12" fill="#13223a" opacity=".08"/>
+ ${[1,.75,.5,.25].map(g=>`<polygon points="${hex(478,182,124,[g,g,g,g,g,g])}" fill="${g===1?'#f2f7fd':'none'}" stroke="#d3e0f0" stroke-width="${g===1?2:1.2}"/>`).join('')}
+ ${[0,1,2,3,4,5].map(i=>{const t=-Math.PI/2+i*Math.PI/3;return`<line x1="478" y1="182" x2="${(478+Math.cos(t)*124).toFixed(1)}" y2="${(182+Math.sin(t)*124).toFixed(1)}" stroke="#d3e0f0" stroke-width="1.2"/>`}).join('')}
+ <g class="rgrow"><polygon points="${hex(478,182,124,V)}" fill="url(#gR)" fill-opacity=".55" stroke="#2f6fd6" stroke-width="3.5" stroke-linejoin="round"/>
+ ${V.map((v,i)=>{const t=-Math.PI/2+i*Math.PI/3;return`<circle cx="${(478+Math.cos(t)*124*v).toFixed(1)}" cy="${(182+Math.sin(t)*124*v).toFixed(1)}" r="7" fill="#ffffff" stroke="#2f6fd6" stroke-width="3"/>`}).join('')}</g>
+ <g transform="translate(566 58)"><circle r="38" fill="#1b5fd0"/><circle r="38" fill="none" stroke="#ffffff" stroke-width="4" opacity=".5"/>
+  <rect x="-18" y="2" width="9" height="16" rx="2" fill="#9fe6dc"/><rect x="-5" y="-8" width="9" height="26" rx="2" fill="#9fd3fb"/><rect x="8" y="-18" width="9" height="36" rx="2" fill="#ffffff"/></g>
+ <path d="M596 128 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4z" fill="#38b6e8"/><path d="M380 300 l3 7 l7 3 l-7 3 l-3 7 l-3 -7 l-7 -3 l7 -3z" fill="#5b63e0" opacity=".7"/>
+ </svg>`;
+ $('#app').innerHTML=`<section class="home"><div><h2>あなたのスキルを、<br>見える形に。</h2>
+ <p>${nq}の質問に答えるだけで、6つの領域のスキルがスコアとチャートになります。所要時間は約10分です。</p>
+ <a class="go" href="#assess">${MODE==='r'&&S.nurses[0]?'もう一度評価する →':'スキル評価をはじめる →'}</a>${MODE==='r'?(S.nurses[0]?'<a class="sub" href="#mine">前回の結果を見る</a>':''):'<a class="sub" href="#list">結果を見る</a>'}</div>
+ <div class="art">${art}</div></section>
+ <div class="how"><div class="panel"><b class="no">1</b><h3>質問に答える</h3><p class="muted" style="margin:0">今の自分に一番近いものを選ぶだけ。正解や良い・悪いはありません。</p></div>
+ <div class="panel"><b class="no">2</b><h3>スキルをスコア化</h3><p class="muted" style="margin:0">回答をもとに、6つの領域をそれぞれ100点満点で自動計算します。</p></div>
+ <div class="panel"><b class="no">3</b><h3>チャートで確認</h3><p class="muted" style="margin:0">総合力グラフとスキルごとのレベルで、得意な領域がひと目でわかります。</p></div></div>
+ <h3 style="margin:28px 0 0">スコア化する6つの領域</h3><div class="axchips">${AX.map(a=>`<span>${a.n}</span>`).join('')}</div>`}
+function route(){RO.splice(0).forEach(r=>r.disconnect());if(MODE==='r'){const h=location.hash.slice(1)||'home';const base=h.split('-')[0];document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.r===base));if(base==='assess')vAssess(S.nurses[0]?.id||null);else if(base==='mine'&&S.nurses[0])vNurse(S.nurses[0].id);else vHome();return}const h=location.hash.slice(1)||'home';const base=h.split('-')[0];
+ document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.r===(base==='nurse'?'list':base)));
+ if(base==='nurse')vNurse(h.slice(6));else if(base==='assess')vAssess(h.slice(7)||null);else if(base==='analysis'||base==='placement')vAnalysis();else if(base==='settings')vSettings();else if(base==='list')vList();else vHome()}
+addEventListener('hashchange',()=>{if(!location.hash.startsWith('#assess'))D=null,step=0;route()});
+route();
+if(window.claude&&window.claude.use)window.claude.use('downloads').then(d=>{DL=d;if(d&&(location.hash==='#settings'||location.hash==='#mine'))route()}).catch(()=>{});
+else{DL={save:async({filename,data})=>{const u=URL.createObjectURL(new Blob([data],{type:/\.csv$/.test(filename)?'text/csv':'text/plain'}));const l=document.createElement('a');l.href=u;l.download=filename;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}};if(location.hash==='#settings'||location.hash==='#mine')route()}
+}
+</script>
+<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
+</body>
+</html>
