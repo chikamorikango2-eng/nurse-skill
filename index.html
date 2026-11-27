@@ -261,7 +261,7 @@ body.pmode .srow{font-size:12px;padding:4px 0}
 .ga{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
 .home{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(18px,3vw,40px);align-items:center;background:var(--band);color:#fff;margin:calc(-1*clamp(20px,3vw,40px)) calc(-1*max(4vw,16px)) 0;padding:clamp(24px,4vw,48px) max(4vw,16px)}
 .home h2{font-size:clamp(30px,4.4vw,48px);line-height:1.1;text-shadow:0 2px 10px rgba(10,40,120,.3)}
-.home p{font-size:17px;margin:14px 0 22px;max-width:30em}
+.home p{font-size:17px;margin:14px 0 22px;max-width:30em;line-height:1.75}.ph{display:inline-block}
 .home .go{display:inline-flex;align-items:center;min-height:52px;padding:10px 28px;border-radius:99px;background:#fff;color:#1b5fd0;font-weight:800;text-decoration:none;font-size:17px;box-shadow:0 8px 20px -8px rgba(10,40,120,.5)}
 .howh{margin:26px 0 0;font-size:18px;color:var(--sub)}.how{margin-top:10px!important}.how .panel{box-shadow:none;background:transparent;border:1px dashed var(--line)}
 .gostart{display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px}
@@ -496,7 +496,7 @@ function periodBanner(){const P=S.period||{};if(!P.start&&!P.end)return'';const 
  return`<div class="pban ${st}"><b>${st==='open'?'回答受付中':st==='before'?'回答の受付はまだ始まっていません':'回答の受付は終了しました'}</b><span>回答期間：${rng}${st==='open'&&dl!=null?`｜締め切りまであと<em>${dl}</em>日`:''}</span></div>`}
 function syncBar(){if(MODE!=='a'||!gasUrl())return'';return`<div class="tools" style="margin-top:0;justify-content:flex-end"><span class="muted" id="sbm">${S.gasKey?('スプレッドシート最終読み込み：'+esc(S.lastSync||'まだ')+(S.lastSync?'（'+esc(S.syncCount)+'名）':'')):'スプレッドシートの管理者パスワードが未設定です（設定・データ）'}</span>${S.gasKey?'<button id="sync">最新の回答を読み込む</button>':''}</div>`}
 function bindSync(){const b=$('#sync');if(b)b.onclick=async()=>{b.disabled=true;$('#sbm').textContent='読み込み中…';try{await loadSheet();route()}catch(e){$('#sbm').textContent=e.message;b.disabled=false}}}
-const RANKS=[[0,'見習いもりんちゃん'],[20,'一人前もりんちゃん'],[40,'頼れるもりんちゃん'],[60,'スーパーもりんちゃん'],[80,'レジェンドもりんちゃん']];
+const RANKS=[[0,'見習いモリンちゃん'],[20,'一人前モリンちゃん'],[40,'頼れるモリンちゃん'],[60,'スーパーモリンちゃん'],[80,'レジェンドモリンちゃん']];
 const GEAR=[{k:'basic',n:'金の聴診器'},{k:'spec',n:'はかせの帽子'},{k:'judge',n:'観察ルーペ'},{k:'support',n:'ハートのバッジ'},{k:'team',n:'リーダーマント'},{k:'night',n:'夜勤ランタン'}];
 const GEAR_AT=60;
 const lvOf=sum=>Math.max(1,Math.min(100,Math.round(sum/6)));const rankOf=lv=>RANKS.filter(r=>lv>=r[0]).pop()[1];
@@ -510,7 +510,7 @@ function morin(eq,o={}){const B='#3b2416',bl='#5b8fc9',dk='#3f6fa8',has=k=>eq.ha
  const cap=(x,y,f)=>`<path d="M${x} ${y-14} Q${x+13*f} ${y-12} ${x+13*f} ${y} Q${x+13*f} ${y+12} ${x} ${y+14} Z" fill="${dk}" stroke="${B}" stroke-width="3.5" stroke-linejoin="round"/>`;
  const joint=(x,y,r=6)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${dk}" stroke="${B}" stroke-width="3"/>`;
  const hand=(x,y,a)=>`<g transform="translate(${x} ${y}) rotate(${a})"><path d="M-8 -6 Q-10 8 0 10 Q10 8 8 -6 Z" fill="${bl}" stroke="${B}" stroke-width="3" stroke-linejoin="round"/><path d="M-8 -2 l-6 -5" stroke="${B}" stroke-width="7" stroke-linecap="round"/><path d="M-8 -2 l-6 -5" stroke="${bl}" stroke-width="3.5" stroke-linecap="round"/><path d="M-3 -6 v-7 M2 -6 v-8 M7 -5 v-6" stroke="${B}" stroke-width="7" stroke-linecap="round"/><path d="M-3 -6 v-7 M2 -6 v-8 M7 -5 v-6" stroke="${bl}" stroke-width="3.5" stroke-linecap="round"/></g>`;
- return`<svg viewBox="0 0 240 300" class="morin" role="img" aria-label="もりんちゃん（装備 ${eq.size}/6）">
+ return`<svg viewBox="0 0 240 300" class="morin" role="img" aria-label="モリンちゃん（装備 ${eq.size}/6）">
  <defs><radialGradient id="${u}a" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#fff3b0" stop-opacity=".95"/><stop offset=".6" stop-color="#ffd25a" stop-opacity=".35"/><stop offset="1" stop-color="#ffd25a" stop-opacity="0"/></radialGradient>
  <radialGradient id="${u}g" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff6b0"/><stop offset="1" stop-color="#ffcf3d" stop-opacity="0"/></radialGradient></defs>
  ${o.legend?`<circle cx="120" cy="150" r="118" fill="url(#${u}a)"/>${[[30,60],[208,70],[24,236],[214,214],[150,10]].map(([x,y])=>`<path d="M${x} ${y-9}l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="#ffd25a"/>`).join('')}`:''}
@@ -549,12 +549,12 @@ function gameHero(n,s){const pw=s.sum*10,lv=lvOf(s.sum),eq=gearOn(s);
  const pe=prev&&prev.eq?new Set(prev.eq):null;const newg=pe?[...eq].filter(k=>!pe.has(k)):[];
  return`<section class="ghero"><div class="gwrap"><div class="gm">${morin(eq,{legend:lv>=80})}<p class="geq">装備 <b>${eq.size}</b> / 6</p></div>
  <div class="gl"><span class="gname">${esc(n.name)}</span><p class="gcls">${rankOf(lv)}</p>
- <p class="glbl">もりんちゃんのスキルポイント</p><p class="gpow"><b id="gpow" data-to="${Math.round(pw)}">0</b></p>
+ <p class="glbl">モリンちゃんのスキルポイント</p><p class="gpow"><b id="gpow" data-to="${Math.round(pw)}">0</b></p>
  ${prev?`<p class="gup ${up>=0?'':'down'}">前回 ${fmtP(prev.p)} → 今回 ${fmtP(pw)}<b>${up>=0?'＋'+fmtP(up)+' UP!':'−'+fmtP(-up)}</b></p>`:''}
  ${newg.length?`<p class="gnew">NEW! ${newg.map(k=>esc(GEAR.find(g=>g.k===k).n)).join('・')} をゲット！</p>`:''}
  <div class="glv"><span>Lv.<b>${lv}</b></span><span class="gexp"><i style="width:${lv>=100?100:((pw/60)%1)*100}%"></i></span><em>${lv>=100?'最高レベル！':`次のレベルまで あと ${fmtP(need)}`}</em></div></div>
  <div class="gr">${AX.map((a,i)=>`<div class="gst"><span>${a.n}</span><span class="gbar"><i style="width:${Math.max(2,s.arr[i])}%"></i><u style="left:${GEAR_AT}%"></u></span><b>${r0(s.arr[i]*10)}</b></div>`).join('')}<p class="gnote">各スキル最大1,000・スキルポイントは最大6,000｜黄色い線（600）を超えると装備をゲット</p></div></div></section>`}
-function gearHTML(n,s){const eq=gearOn(s);return`<div class="panel gq"><h3>装備コレクション</h3><p class="muted" style="margin:2px 0 10px;font-size:14px">各スキルが600を超えると、もりんちゃんの装備が増えます。</p><div class="ggrid">${GEAR.map(g=>{const i=AX.findIndex(a=>a.k===g.k);const on=eq.has(g.k);const nd=Math.max(0,(GEAR_AT-s.arr[i])*10);return`<div class="gt ${on?'on':''}">${gearIcon(g.k,on)}<b>${g.n}</b><span>${AX[i].n}</span><em>${on?'ゲット済み':`あと ${fmtP(nd)}`}</em></div>`}).join('')}</div></div>`}
+function gearHTML(n,s){const eq=gearOn(s);return`<div class="panel gq"><h3>装備コレクション</h3><p class="muted" style="margin:2px 0 10px;font-size:14px">各スキルが600を超えると、モリンちゃんの装備が増えます。</p><div class="ggrid">${GEAR.map(g=>{const i=AX.findIndex(a=>a.k===g.k);const on=eq.has(g.k);const nd=Math.max(0,(GEAR_AT-s.arr[i])*10);return`<div class="gt ${on?'on':''}">${gearIcon(g.k,on)}<b>${g.n}</b><span>${AX[i].n}</span><em>${on?'ゲット済み':`あと ${fmtP(nd)}`}</em></div>`}).join('')}</div></div>`}
 function questHTML(n){const Q=quests(n);if(!Q.length)return'';return`<div class="panel gq"><h3>スキルアップのヒント</h3><p class="muted" style="margin:2px 0 10px;font-size:14px">この3つを1段階上げると、スキルポイントがこれだけ上がります。</p>${Q.map(x=>`<div class="gqr"><span class="tag">${esc(x.ax)}</span><b>${esc(x.q[1])}</b><span class="muted">「${esc(x.to)}」になると</span><em>＋${fmtP(x.g)}</em></div>`).join('')}</div>`}
 function vNurse(id){
  const n=S.nurses.find(x=>x.id===id);const app=$('#app');if(!n){location.hash=MODE==='r'?'home':'list';return}
@@ -924,13 +924,13 @@ function vHome(){
  if(MODE==='a'){const M=[['list','組織・一覧','全体の6角形チャートと、看護師さん一人ひとりの結果を見ます。'],['analysis','部署のスキル分析','部署ごとの強み・伸ばしたいスキルと、全部署の比較を見ます。印刷もできます。'],['trend','経時変化','前回の回答期間と今回の期間を比べて、スキルがどう変わったかを見ます。'],['status','回答状況','職員名簿をもとに、回答率と、まだ回答していない人を確認します。'],['settings','設定・データ','スプレッドシート連携・職員名簿の読み込み・部署の設定をします。']];
  $('#app').innerHTML=`<section class="home"><div><h2>管理者ページ</h2><p>看護師さんが「わたしのスキルマップ」で回答した結果を、スプレッドシートから読み込んで確認・分析します。</p></div><div class="art">${art}</div></section>
  <h3 class="howh">メニュー</h3><div class="how amenu">${M.map((m,k)=>`<a class="panel" href="#${m[0]}" style="text-decoration:none;color:inherit;display:block"><b class="no">${k+1}</b><h3>${m[1]}</h3><p class="muted" style="margin:0">${m[2]}</p></a>`).join('')}</div>`;return}
- $('#app').innerHTML=`<section class="home"><div><h2>${MODE==='r'?'もりんちゃんと<br>スキルアップしよう！':'あなたのスキルを、<br>見える形に。'}</h2>
- <p>${MODE==='r'?`${nq}の質問に答えると、あなたのスキルが、もりんちゃんのスキルポイントとレベルになります。スキルが伸びると装備がどんどん増えていきます。所要時間は約7分。`:`${nq}の質問に答えるだけで、6つの領域のスキルがスコアとチャートになります。所要時間は約7分です。`}</p>
+ $('#app').innerHTML=`<section class="home"><div><h2>${MODE==='r'?'モリンちゃんと<br><span class="ph">スキルアップ</span><span class="ph">しよう！</span>':'あなたのスキルを、<br>見える形に。'}</h2>
+ <p>${MODE==='r'?`<span class="ph">${nq}の質問に</span><span class="ph">答えると、</span><br><span class="ph">あなたのスキルが、</span><span class="ph">モリンちゃんの</span><span class="ph">スキルポイントと</span><span class="ph">レベルになります。</span><br><span class="ph">スキルが伸びると、</span><span class="ph">装備が</span><span class="ph">どんどん</span><span class="ph">増えていきます。</span><br><span class="ph">所要時間は</span><span class="ph">約7分です。</span>`:`${nq}の質問に答えるだけで、6つの領域のスキルがスコアとチャートになります。所要時間は約7分です。`}</p>
  ${MODE==='r'?periodBanner():''}${MODE==='r'&&pState()!=='open'?'':`<div class="gostart">${MODE==='r'?'<span class="gohint">ここからスタート！</span>':''}<a class="go ${MODE==='r'?'gor':''}" href="#assess">${MODE==='r'&&S.nurses[0]?'もう一度答える ▶':MODE==='r'?'回答をはじめる ▶':'はじめる →'}</a></div>`}${MODE==='r'?(S.nurses[0]?'<a class="sub" href="#mine">前回の結果を見る</a>':''):'<a class="sub" href="#list">結果を見る</a>'}</div>
  <div class="art ${MODE==='r'?'artm':''}">${MODE==='r'?`<div class="mrow">${[new Set(),new Set(['basic','support']),new Set(GEAR.map(g=>g.k))].map((e,k)=>`<div>${morin(e,{legend:k===2})}<span>${['見習い','一人前','レジェンド'][k]}</span></div>`).join('<i class="marr"></i>')}</div>`:art}</div></section>
- <h3 class="howh">回答の流れ</h3><div class="how"><div class="panel"><b class="no">1</b><h3>質問に答える</h3><p class="muted" style="margin:0">今の自分に一番近いものを選ぶだけ。正解や良い・悪いはありません。</p></div>
- <div class="panel"><b class="no">2</b><h3>スキルをスコア化</h3><p class="muted" style="margin:0">回答をもとに、6つの領域をそれぞれ100点満点で自動計算します。</p></div>
- <div class="panel"><b class="no">3</b><h3>チャートで確認</h3><p class="muted" style="margin:0">総合力グラフとスキルごとのレベルで、得意な領域がひと目でわかります。</p></div></div>
+ <h3 class="howh">回答の流れ</h3><div class="how"><div class="panel"><b class="no">1</b><h3>質問に答える</h3><p class="muted" style="margin:0"><span class="ph">今の自分に</span><span class="ph">一番近いものを</span><span class="ph">選ぶだけ。</span><span class="ph">正解や良い・悪いは</span><span class="ph">ありません。</span></p></div>
+ <div class="panel"><b class="no">2</b><h3>スキルをスコア化</h3><p class="muted" style="margin:0"><span class="ph">回答をもとに、</span><span class="ph">6つの領域を</span><span class="ph">それぞれ</span><span class="ph">100点満点で</span><span class="ph">自動計算します。</span></p></div>
+ <div class="panel"><b class="no">3</b><h3>チャートで確認</h3><p class="muted" style="margin:0"><span class="ph">総合力グラフと</span><span class="ph">スキルごとの</span><span class="ph">レベルで、</span><span class="ph">得意な領域が</span><span class="ph">ひと目で</span><span class="ph">わかります。</span></p></div></div>
  <h3 style="margin:28px 0 0">スコア化する6つの領域</h3><div class="axchips">${AX.map(a=>`<span>${a.n}</span>`).join('')}</div>`}
 function route(){RO.splice(0).forEach(r=>r.disconnect());if(MODE==='r'){const h=location.hash.slice(1)||'home';const base=h.split('-')[0];document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.r===base));if(base==='assess')vAssess(S.nurses[0]?.id||null);else if(base==='mine'&&S.nurses[0])vNurse(S.nurses[0].id);else vHome();return}const h=location.hash.slice(1)||'home';const base=h.split('-')[0];
  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.r===(base==='nurse'?'list':base)));
