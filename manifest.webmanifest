@@ -1,6 +1,6 @@
 {
-  "name": "看護スキル評価",
-  "short_name": "スキル評価",
+  "name": "わたしのスキルマップ",
+  "short_name": "スキルマップ",
   "lang": "ja",
   "start_url": "./",
   "scope": "./",
