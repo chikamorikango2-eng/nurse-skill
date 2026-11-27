@@ -81,6 +81,15 @@ tr.click{cursor:pointer}tr.click:hover{background:var(--soft)}
 .q{padding:16px 0;border-bottom:1px solid var(--line)}
 .q p{margin:0 0 10px;font-weight:500}
 .opts{display:flex;flex-wrap:wrap;gap:6px}
+body[data-m=r] .qwrap{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:6px 20px 14px;box-shadow:0 6px 20px -14px rgba(30,80,170,.45)}
+.qhead{margin:12px 0 0;font-size:20px;color:var(--hot)}
+.qwrap .q{border-bottom:1px solid var(--line)}.qwrap .q:last-child{border-bottom:0}
+.qwrap label.opt{background:light-dark(#eef4fb,#22314a);border-color:light-dark(#c9dbf0,#33476a)}
+.qwrap label.opt:hover{border-color:var(--hot)}
+.qwrap label.opt:has(input:checked){background:var(--hot);border-color:var(--hot);color:#fff;font-weight:700}
+.qwrap .q>p:first-child{font-size:16px}
+.stepbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:8px 0 12px;font-weight:700;color:var(--sub)}.stepbar b{font-size:22px;color:var(--hot)}
+.sdots{display:flex;gap:6px}.sdots i{width:26px;height:8px;border-radius:4px;background:var(--line)}.sdots i.d{background:color-mix(in srgb,var(--hot) 45%,var(--line))}.sdots i.c{background:var(--hot)}
 label.opt{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-height:44px;font-size:14px;cursor:pointer;background:var(--bg)}
 label.opt input{position:absolute;opacity:0;width:1px;height:1px}
 label.opt b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--soft);font-size:12px}
@@ -89,11 +98,16 @@ label.opt:has(input:checked) b{background:var(--hot);color:#fff}
 .field{display:grid;gap:4px;font-size:14px}
 .opts.four{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
 .opts.four label.opt{justify-content:center;text-align:center;min-height:56px;font-size:15px;font-weight:500;line-height:1.35;padding:8px}
+.ln{display:block;white-space:nowrap}
+.opts.four label.opt{flex-direction:column;gap:0;line-height:1.3}
+.opts.four.sp5{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:6px}.opts.four.sp5 label.opt{flex-direction:column;gap:2px;font-size:13px;min-height:62px;padding:6px 4px;grid-column:auto!important}.opts.four.sp5 small{font-size:11px;opacity:.7;font-weight:700}
+@media(max-width:600px){.opts.four.sp5{gap:4px}.opts.four.sp5 label.opt{font-size:10.5px;line-height:1.3;min-height:72px;padding:5px 1px;letter-spacing:-.05em}}
 .opts.four.sp4{grid-template-columns:repeat(4,minmax(0,1fr))}
-@media(max-width:600px){.opts.four{grid-template-columns:repeat(2,minmax(0,1fr))}.opts.four:not(.sp4) label.opt:first-child{grid-column:1/-1}.opts.four.sp4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.opts.four:not(.sp5):not(.sp4) label.opt:first-child{flex-direction:row;justify-content:center}.opts.four{grid-template-columns:repeat(2,minmax(0,1fr))}.opts.four:not(.sp4) label.opt:first-child{grid-column:1/-1}.opts.four.sp4{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .opts.lvl{flex-direction:column}
 .opts.lvl label.opt{align-items:flex-start;line-height:1.5}
 .opts.lvl label.opt b{flex:none;margin-top:1px}
+.spsub{margin:6px 0 0 8px;padding-left:12px;border-left:3px solid var(--line)}.q .sqt{margin:14px 0 6px;font-size:15px;font-weight:700}
 .spchk{display:flex;gap:10px;align-items:center;font-weight:500;cursor:pointer;min-height:44px}
 .spchk input{width:22px;height:22px;min-height:0}
 .fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(14em,1fr));gap:14px}
@@ -184,6 +198,34 @@ label.opt:has(input:checked) b{background:var(--hot);color:#fff}
 .pban{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;border-radius:14px;padding:10px 16px;margin:10px 0 14px;background:#e6fbef;color:#0b5d2b;border:2px solid #3fc77a}.pban b{font-size:17px}.pban em{font-style:normal;font:800 22px "M PLUS Rounded 1c",sans-serif;margin:0 2px}
 .pban.before,.pban.after{background:#fff4e5;color:#8a4a00;border-color:#f0a43c}
 .home .pban{background:#ffffffee}
+
+.prtbtn{margin-left:auto;border-radius:99px;font-weight:700}
+#phead{display:none}
+body.pmode main{max-width:718px!important;margin:0;padding:0}
+body.pmode .top,body.pmode .subtabs,body.pmode #find,body.pmode .gap,body.pmode .tools select,body.pmode .tools label,body.pmode .tools button,body.pmode .tip,body.pmode .redo{display:none!important}
+body.pmode #phead{display:flex;justify-content:space-between;gap:10px;border-bottom:2px solid #1b5fd0;padding:0 0 6px;margin:0 0 10px;font-size:13px}
+body.pmode #phead b{color:#1b5fd0;font-size:15px}
+body.pmode .toprow,body.pmode .grid2,body.pmode .ga{grid-template-columns:minmax(0,1fr)!important}
+body.pmode .kcol{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:auto}
+body.pmode .kbox{padding:10px 12px}body.pmode .kbox .bignum b{font-size:40px}
+body.pmode .radfig{min-height:380px}
+body.pmode .axcards{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+body.pmode .axc{padding:10px}body.pmode .axc .bignum b{font-size:30px}body.pmode .axc .hist{height:90px}
+body.pmode h2{font-size:20px}
+body.pmode table{font-size:10px}body.pmode th,body.pmode td{padding:4px 3px}
+body.pmode .hm td.c{min-width:0}
+body.pmode .drow{grid-template-columns:9em 3em minmax(0,1fr) 3em minmax(0,1.3fr);font-size:11px;padding:4px 0}
+body.pmode .srow{font-size:12px;padding:4px 0}
+@page{size:A4 portrait;margin:10mm}
+@media print{
+ html,body{background:#fff!important}*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-shadow:none!important}
+ .band{padding:0!important}
+ .panel,.kbox,.axc,.toprow,.krow,.drow,.srow,tr{break-inside:avoid}
+ h2,h3{break-after:avoid}
+ .pbreak{break-before:page}
+ .panel:has(#srows),.panel:has(#drows),.panel:has(#ul),.panel:has(table){break-inside:auto}
+ .top,.subtabs,#find,.tip{display:none!important}
+}
 .toprow{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;align-items:stretch}
 .kcol{display:grid;gap:14px;grid-auto-rows:1fr}
 .kbox{background:var(--card);border:2px solid color-mix(in srgb,var(--s1) 35%,var(--line));border-radius:20px;padding:16px 20px;display:flex;flex-direction:column;justify-content:center}
@@ -221,6 +263,13 @@ label.opt:has(input:checked) b{background:var(--hot);color:#fff}
 .home h2{font-size:clamp(30px,4.4vw,48px);line-height:1.1;text-shadow:0 2px 10px rgba(10,40,120,.3)}
 .home p{font-size:17px;margin:14px 0 22px;max-width:30em}
 .home .go{display:inline-flex;align-items:center;min-height:52px;padding:10px 28px;border-radius:99px;background:#fff;color:#1b5fd0;font-weight:800;text-decoration:none;font-size:17px;box-shadow:0 8px 20px -8px rgba(10,40,120,.5)}
+.howh{margin:26px 0 0;font-size:18px;color:var(--sub)}.how{margin-top:10px!important}.how .panel{box-shadow:none;background:transparent;border:1px dashed var(--line)}
+.gostart{display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px}
+.gohint{background:#fff;color:#e2463f;font-weight:800;font-size:15px;padding:4px 14px;border-radius:99px;position:relative;margin-left:14px}
+.gohint::after{content:"";position:absolute;left:26px;bottom:-7px;border:7px solid transparent;border-top-color:#fff;border-bottom:0}
+.home .go.gor{background:linear-gradient(180deg,#ffd84a,#ff9f1c);color:#3b2416;font-size:22px;min-height:64px;padding:12px 38px;border:3px solid #fff;box-shadow:0 10px 24px -8px rgba(160,70,0,.65),0 0 0 4px rgba(255,210,74,.35)}
+.home .go.gor:hover{filter:brightness(1.05);transform:translateY(-1px)}
+@media(prefers-reduced-motion:no-preference){.home .go.gor{animation:gopulse 1.8s ease-in-out infinite}@keyframes gopulse{0%,100%{box-shadow:0 10px 24px -8px rgba(160,70,0,.65),0 0 0 4px rgba(255,210,74,.35)}50%{box-shadow:0 10px 24px -8px rgba(160,70,0,.65),0 0 0 12px rgba(255,210,74,0)}}}
 .home .sub{display:inline-flex;align-items:center;min-height:52px;padding:10px 20px;color:#fff;font-weight:700;margin-left:6px}
 .art{background:var(--card);border-radius:28px;box-shadow:0 18px 40px -18px rgba(10,40,120,.55);aspect-ratio:16/10}
 .art svg{width:100%;height:100%;display:block}
@@ -258,6 +307,8 @@ const MAXT=AX.length*100;
 const SC4=['経験がない','まだ自信がない','先輩と一緒ならできる','一人でできる','人に教えられる'];
 const SC_N1=['まだない','見習い中','一人で夜勤できる','ときどきリーダーをする','いつもリーダーを任される'];
 const SC_TECH=SC4,SC_SPEC=SC4,SC_SKILL=SC4,SC_NIGHT=SC_N1;
+const BRK={'経験がない':['経験が','ない'],'まだ自信がない':['まだ自信','がない'],'先輩と一緒ならできる':['先輩と一緒','ならできる'],'一人でできる':['一人で','できる'],'人に教えられる':['人に','教えられる'],'一人で夜勤できる':['一人で','夜勤できる'],'ときどきリーダーをする':['ときどき','リーダー','をする'],'いつもリーダーを任される':['いつも','リーダーを','任される']};
+const lbl=t=>(BRK[t]||[t]).map(x=>`<span class="ln">${esc(x)}</span>`).join('');
 const ROMAN=['0','1','2','3','4'];
 const BASIC=[['b1','バイタルサインの測定・観察（心電図モニターを含む）'],['b2','採血・注射・点滴（輸液ポンプ・シリンジポンプを含む）'],['b3','薬の取り扱い（内服・インスリン・麻薬・輸血）'],['b4','吸引・酸素吸入・一次救命処置'],['b5','食事・排泄のケア（経管栄養・導尿を含む）'],['b6','清潔ケア・移乗・体位変換'],['b7','傷の処置・床ずれ予防・感染対策'],['b8','看護記録']];
 const SPEC=[['s_er','救急看護（トリアージ・初期対応）'],['s_icu','集中治療（人工呼吸器・鎮静・循環補助などの管理）'],['s_cv','循環器看護（心電図判読・心カテ前後の管理）'],['s_neuro','脳神経看護（意識レベル評価・脳卒中急性期ケア）'],['s_ope','手術看護（器械出し・外回り）'],['s_onc','がん・緩和ケア（化学療法・疼痛管理）'],['s_rehab','リハビリテーション・回復期看護（ADL評価・在宅復帰支援）'],['s_dial','透析看護'],['s_psy','精神科看護（精神状態のアセスメント・行動制限下のケア）'],['s_ortho','整形外科看護（術前後管理・ロコモ・転倒予防）'],['s_home','在宅・訪問看護（在宅療養支援・地域連携）'],['s_gi','消化器看護（内視鏡検査・治療の前後管理・消化器疾患）'],['s_surg','外科病棟看護（周術期管理・ドレーン・創傷管理）'],['s_med','内科看護（慢性疾患・多疾患併存の管理と療養指導）']];
@@ -266,6 +317,10 @@ const LVQ={
  support:[['p1','患者さんや家族の思いや希望を聞ける'],['p2','その人に合わせてケアを工夫できる'],['p3','治療や検査のことを、患者さんや家族にわかりやすく説明できる'],['p4','治療や退院のことを、患者さんや家族が決めるのを手伝える'],['p5','「これでいいのかな？」と感じたことを、チームで話し合える'],['p6','痛みや不安などのつらさに気づき、和らげる工夫ができる'],['p7','退院後の生活を考えて、指導や準備ができる'],['p8','家族の不安や負担に気づいて、声をかけられる']],
  team:[['m1','困ったときに、周りに相談や応援を頼める'],['m2','忙しそうな人に気づいて、自分から手伝える'],['m3','医師やリハビリなど、他の職種と相談しながら進められる'],['m4','リーダーとして、その日の業務を調整できる'],['m5','後輩や学生に教えられる'],['m6','ヒヤリハットを報告し、対策を一緒に考えられる'],['m7','申し送りで、必要なことを漏れなく伝えられる'],['m8','業務の改善や、新しいやり方を提案できる']]};
 const LVALL=Object.values(LVQ).flat();
+const SPSUB={"s_er": [["s_er_1", "トリアージ（緊急度の判断）"], ["s_er_2", "救急搬送患者の初期対応・処置の介助"], ["s_er_3", "ショックや多発外傷など重症患者の観察"]], "s_icu": [["s_icu_1", "人工呼吸器を装着した患者の管理"], ["s_icu_2", "鎮静・鎮痛中の患者の評価と管理"], ["s_icu_3", "循環作動薬や持続透析など集中治療の機器・薬剤の管理"]], "s_cv": [["s_cv_1", "心電図の判読（不整脈の判別）"], ["s_cv_2", "心臓カテーテル検査・治療の前後の看護"], ["s_cv_3", "心不全患者の観察と生活指導"]], "s_neuro": [["s_neuro_1", "意識レベル・神経症状の評価（JCS・GCSなど）"], ["s_neuro_2", "脳卒中急性期の観察と管理"], ["s_neuro_3", "開頭術後やドレーンの管理"]], "s_ope": [["s_ope_1", "器械出し"], ["s_ope_2", "外回り（麻酔の介助・体位固定など）"], ["s_ope_3", "術前・術後訪問と周術期の安全管理"]], "s_onc": [["s_onc_1", "化学療法の投与管理と副作用の観察"], ["s_onc_2", "がんの痛みの評価と緩和"], ["s_onc_3", "終末期の患者・家族へのケア"]], "s_rehab": [["s_rehab_1", "ADLの評価と、リハビリと連動した生活援助"], ["s_rehab_2", "在宅復帰に向けた退院支援・家族指導"], ["s_rehab_3", "リハビリスタッフとのカンファレンス・調整"]], "s_dial": [["s_dial_1", "シャントの管理と穿刺"], ["s_dial_2", "透析中の観察とトラブル対応"], ["s_dial_3", "透析患者の自己管理指導（食事・水分など）"]], "s_psy": [["s_psy_1", "精神状態のアセスメント"], ["s_psy_2", "行動制限中の患者の看護"], ["s_psy_3", "不穏・興奮時の対応（ディエスカレーション）"]], "s_ortho": [["s_ortho_1", "整形外科手術の術前・術後の管理"], ["s_ortho_2", "牽引・ギプス・装具の管理"], ["s_ortho_3", "骨折患者の離床と転倒予防"]], "s_home": [["s_home_1", "在宅での療養生活の支援"], ["s_home_2", "在宅での医療処置（在宅酸素・経管栄養など）の管理"], ["s_home_3", "地域の関係機関との連携"]], "s_gi": [["s_gi_1", "内視鏡検査・治療の前後の看護"], ["s_gi_2", "消化管出血など急な症状の観察と対応"], ["s_gi_3", "ストーマケアと消化器術後の管理"]], "s_surg": [["s_surg_1", "手術前の準備と術後の観察"], ["s_surg_2", "ドレーン・創部の管理"], ["s_surg_3", "術後合併症の予防と早期離床"]], "s_med": [["s_med_1", "慢性疾患（糖尿病・心不全・COPDなど）の管理"], ["s_med_2", "多疾患併存・高齢患者の全身管理"], ["s_med_3", "服薬・生活習慣の療養指導"]]};
+const SPSUBALL=Object.values(SPSUB).flat();
+const spLv=(a,k)=>{const v=(SPSUB[k]||[]).map(q=>a[q[0]]).filter(x=>x!=null&&x!=='').map(Number);return v.length?v.reduce((x,y)=>x+y,0)/v.length:null};
+
 const NIGHT=[['nt2','夜間の急変に、少ない人数で対応できる'],['nt3','夜間に医師へ連絡するかどうか判断できる'],['nt4','不穏・せん妄の患者さんに安全に対応できる'],['nt5','夜間に複数の患者さんのケアの順番を組み立てられる'],['nt6','夜間の少ない人数でも、時間内に業務を終えられる'],['nt7','眠れない患者さんが休めるよう、工夫できる'],['nt8','夜間の入院や急な処置を受け入れられる']];
 const SHORT={s_rehab:'回復期リハ看護',b1:'バイタル・心電図',b2:'採血・注射・点滴',b3:'薬の取り扱い',b4:'吸引・酸素・救命',b5:'食事・排泄ケア',b6:'清潔・移乗',b7:'創傷・感染対策',b8:'看護記録',j1:'変化に気づく',j2:'状態を考える',j3:'報告する',j4:'ケアの順番を決める',j5:'予定を組み替える',j6:'急変時に動く',j7:'リスクを予測',j8:'検査前後の観察',p1:'思いを聞く',p2:'ケアを工夫する',p3:'わかりやすく説明',p4:'決めるのを手伝う',p5:'倫理的な話し合い',p6:'つらさを和らげる',p7:'退院後の生活支援',p8:'家族への気づかい',m1:'相談・応援を頼む',m2:'自分から手伝う',m3:'多職種との相談',m4:'リーダー',m5:'後輩・学生指導',m6:'ヒヤリハット対策',m7:'申し送り',m8:'業務改善の提案',nt1:'夜勤の経験',nt2:'夜間の急変対応',nt3:'医師への連絡判断',nt4:'不穏・せん妄対応',nt5:'夜間の優先順位',nt6:'時間内に終える',nt7:'眠れない人への工夫',nt8:'夜間入院・急な処置'};
 const PILL=['#a9d8fb','#9fe6dc','#c3c9fa','#b8e6c4','#9cc4f5','#d3c4f2','#a6e3ee','#b9d0f7','#a8ead0','#c9d7ff','#9fd9f0','#d8cff6','#b3e0e8','#bfd6ea'];
@@ -275,7 +330,7 @@ const QUAL=[['なし',0],['院内認定ナース',8],['特定行為研修修了'
 const NAVAIL=['不可（0回）','月1〜3回','月4〜6回','月7回以上'];
 const ADV={basic:'新人チェックリストでの再確認とOJTでの技術チェック',spec:'関心領域へのローテーションや認定取得の支援',judge:'事例検討・フィジカルアセスメント研修と急変シミュレーション',support:'倫理カンファレンスへの参加と退院支援・意思決定支援の担当',team:'係・リーダー補佐・プリセプターなど役割の付与',night:'夜勤リーダー見習いと夜間急変のシミュレーション訓練'};
 const nsid=v=>String(v??'').replace(/^'/,'').replace(/[０-９Ａ-Ｚａ-ｚ－]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/\s/g,'').toUpperCase().slice(0,20);
-const QIDS=()=>[...BASIC,...SPEC,...LVALL,['nt1','夜勤の経験'],...NIGHT];
+const QIDS=()=>[...BASIC,...SPEC,...SPSUBALL,...LVALL,['nt1','夜勤の経験'],...NIGHT];
 const GROUPS=['急性期・集中病棟','急性期・一般病棟','急性期・外来その他','精神科・病棟','精神科・外来','地域包括ケア・病棟','地域包括ケア・外来その他','回復期リハ・病棟','回復期リハ・外来その他','訪問看護'];
 const GW={'急性期・集中病棟':[2,1,3,2,2,3],'急性期・一般病棟':[2,2,2,1,2,2],'急性期・外来その他':[2,2,2,2,3,0],'精神科・病棟':[2,2,2,1,3,2],'精神科・外来':[2,2,2,1,3,0],'地域包括ケア・病棟':[2,2,1,1,3,2],'地域包括ケア・外来その他':[2,2,2,1,3,0],'回復期リハ・病棟':[2,2,1,1,3,1],'回復期リハ・外来その他':[2,2,1,1,3,0],'訪問看護':[3,1,2,3,3,0]};
 const DEF_DEPT=[
@@ -289,7 +344,8 @@ const DEF_DEPT=[
  ['看護部長室','急性期・外来その他',[],[1,3,1,3,3,0],0],['リハ看護部長室','回復期リハ・外来その他',[],[1,3,1,3,3,0],0],['ｵﾙｿﾘﾊ看護部長室','回復期リハ・外来その他',[],[1,3,1,3,3,0],0]
 ].map((x,i)=>({id:'k'+(i+1),name:x[0],group:x[1],dom:x[2],w:[...(x[3]||GW[x[1]])],cap:x[4]??(x[1]==='急性期・集中病棟'?2:1)}));
 const MODE=document.documentElement.dataset.mode==='r'?'r':'a';
-const KEY=MODE==='r'?'nurseSkillMap.resp8':'nurseSkillMap.v8';
+document.body.dataset.m=MODE;
+const KEY=MODE==='r'?'nurseSkillMap.resp9':'nurseSkillMap.v9';
 let S;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=s=>document.querySelector(s);
@@ -322,6 +378,7 @@ function sample(){
   BASIC.forEach(q=>a[q[0]]=pick(1.5+2.4*g));
   SPEC.forEach(q=>{const v=pick(rnd()*1.4*g);if(v>0)a[q[0]]=v});const main=d.dom[0]||SPEC[Math.floor(rnd()*SPEC.length)][0];a[main]=Math.max(1,pick(1.2+2.8*g));
   if(rnd()<.35)a[SPEC[Math.floor(rnd()*SPEC.length)][0]]=Math.max(1,pick(1+2.5*g));
+  SPEC.forEach(q=>{if(a[q[0]]!=null){let t=0;SPSUB[q[0]].forEach(sq=>{const v=Math.max(1,Math.min(4,a[q[0]]+Math.round((rnd()-.5)*1.6)));a[sq[0]]=v;t+=v});a[q[0]]=t/3}});
   LVALL.forEach(q=>a[q[0]]=pick(1.1+2.6*g+(q[0][0]==='m'?-.4:0)));
   a.nt1=Math.min(4,Math.floor(g*4.6));NIGHT.forEach(q=>a[q[0]]=pick(.8+2.8*g));
   const q=yrs>12&&rnd()<.4?(rnd()<.5?3:2):(yrs>6&&rnd()<.3?1:0);
@@ -350,6 +407,11 @@ function radar(box,series,opt={}){
   s.innerHTML=h};
  const ro=new ResizeObserver(draw);ro.observe(s);RO.push(ro);draw()}
 if(MODE==='r')$('#nav').innerHTML='<a href="#home" data-r="home">ホーム</a><a href="#assess" data-r="assess">回答する</a><a href="#mine" data-r="mine">自分の結果</a>';
+function doPrint(title){let ph=document.getElementById('phead');if(!ph){ph=document.createElement('div');ph.id='phead';document.getElementById('app').prepend(ph)}
+ ph.innerHTML=`<b>看護スキル総合力マップ</b><span>${esc(title)}</span><span>出力日：${new Date().toLocaleDateString('ja-JP')}</span>`;
+ document.body.classList.add('pmode');setTimeout(()=>{window.print()},600)}
+addEventListener('afterprint',()=>{document.body.classList.remove('pmode');const ph=document.getElementById('phead');if(ph)ph.remove()});
+document.addEventListener('click',e=>{const b=e.target.closest('.prtbtn');if(b){const t=b.dataset.prt+(location.hash.startsWith('#analysis')&&!location.hash.includes('all')&&AS.rd?'：'+AS.rd:'');doPrint(t)}});
 const tip=$('#tip');
 document.addEventListener('mousemove',e=>{const t=e.target.closest&&e.target.closest('[data-t]');if(t){tip.textContent=t.dataset.t;tip.style.opacity=1;tip.style.left=Math.min(innerWidth-270,e.clientX+14)+'px';tip.style.top=(e.clientY+14)+'px'}else tip.style.opacity=0});
 const barsHTML=(arr,lowMark)=>`<div class="bars">${AX.map((a,i)=>`<div class="bar ${lowMark&&lowMark.includes(i)?'low':''}"><span>${a.n}</span><span class="t"><i style="width:${Math.max(1,arr[i])}%"></i></span><span class="v">${r0(arr[i])}</span></div>`).join('')}</div>`;
@@ -387,7 +449,7 @@ function decodeCodes(t){const m=t.match(/NSK1:[A-Za-z0-9+/=]+/g)||[];let c=0;m.f
 const CFG=window.NSK_CONFIG||{};const IN_ART=!!(window.claude&&window.claude.use);
 const gasUrl=()=>IN_ART?'':String(S.gasUrl||CFG.gasUrl||'').trim();
 function sheetRow(n){const s=score(n);const r={id:n.id,'職員番号':n.sid||'','氏名':n.name,'所属部署':n.dept,'部署グループ':grpOf(n.dept),'経験年数':n.years,'経験部署数':n.deptCount,'現部署年数':n.curYears,'資格':QUAL[n.qual||0][0],'夜勤可能回数':NAVAIL[+n.navail||0],'更新日':n.updated};
- QIDS().forEach(q=>{r[q[0]+'｜'+shortOf(q)]=n.a[q[0]]??''});AX.forEach((a,i)=>r[a.n]=r0(s.arr[i]));r['総合力（'+MAXT+'点）']=r0(s.sum);return r}
+ QIDS().forEach(q=>{const v=n.a[q[0]];r[q[0]+'｜'+shortOf(q)]=v==null||v===''?'':Math.round(+v*100)/100});AX.forEach((a,i)=>r[a.n]=r0(s.arr[i]));r['総合力（'+MAXT+'点）']=r0(s.sum);return r}
 async function sendSheet(n){const u=gasUrl();if(!u)throw new Error('nourl');const res=await fetch(u,{method:'POST',body:JSON.stringify({row:sheetRow(n)})});const j=await res.json();if(!j.ok)throw new Error(j.error||'ng');return true}
 function fromSheetRow(o){const a={};Object.keys(o).forEach(k=>{if(k.includes('｜')){const v=o[k];if(v!==''&&v!=null&&!isNaN(+v))a[k.split('｜')[0]]=Math.max(0,Math.min(4,+v))}});
  const tx=v=>String(v??'').replace(/^'/,'');
@@ -399,6 +461,7 @@ async function loadSheet(){const u=gasUrl(),k=S.gasKey;if(!u||!k)throw new Error
  const sids=new Set(uniq.map(r=>r.sid).filter(Boolean));S.nurses=S.nurses.filter(n=>n.src!=='sheet'&&!(uniq.length&&n.sample)&&!(n.sid&&sids.has(n.sid))).concat(uniq);if(uniq.length&&(S.roster||[]).some(r=>r.sample))S.roster=[];S.lastSync=new Date().toLocaleString('ja-JP');S.syncCount=uniq.length;save();return uniq.length}
 const todayJ=()=>new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Tokyo'});
 const fmtD=d=>{if(!d)return'';const t=new Date(d+'T00:00:00+09:00');return isNaN(t)?esc(d):`${t.getMonth()+1}月${t.getDate()}日（${'日月火水木金土'[t.getDay()]}）`};
+function deptRank(name){const gs=[...new Set([...GROUPS,...S.depts.map(d=>d.group||'未設定')])];const i=S.depts.findIndex(d=>d.name===name);if(i<0)return 1e6;return gs.indexOf(S.depts[i].group||'未設定')*1000+i}
 function pState(){const P=S.period||{};if(!P.start&&!P.end)return'open';const t=todayJ();if(P.start&&t<P.start)return'before';if(P.end&&t>P.end)return'after';return'open'}
 function daysLeft(){const P=S.period||{};if(!P.end)return null;return Math.round((new Date(P.end+'T00:00:00+09:00')-new Date(todayJ()+'T00:00:00+09:00'))/864e5)+1}
 async function loadPeriod(){const u=gasUrl();if(!u)return;try{const r=await fetch(u+(u.includes('?')?'&':'?')+'action=period&t='+Date.now(),{cache:'no-store'});const j=await r.json();if(j.ok){S.period={start:j.start||'',end:j.end||''};save()}}catch(e){}}
@@ -415,6 +478,9 @@ const gearOn=s=>new Set(AX.map((a,i)=>s.arr[i]>=GEAR_AT?a.k:null).filter(Boolean
 let MID=0;
 function morin(eq,o={}){const B='#3b2416',bl='#5b8fc9',dk='#3f6fa8',has=k=>eq.has(k),u='m'+(MID++);
  const limb=(pts,w=12)=>`<polyline points="${pts}" fill="none" stroke="${B}" stroke-width="${w+5}" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${pts}" fill="none" stroke="${bl}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${pts}" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 9" transform="translate(-2 -2)"/>`;
+ const block=(x1,y1,x2,y2,w=15)=>{const L=Math.hypot(x2-x1,y2-y1),A=Math.atan2(y2-y1,x2-x1)*180/Math.PI;return`<g transform="translate(${x1} ${y1}) rotate(${A.toFixed(1)})"><rect x="0" y="${-w/2}" width="${L.toFixed(1)}" height="${w}" rx="3" fill="${bl}" stroke="${B}" stroke-width="3.5"/><path d="M${(L*.2).toFixed(1)} ${-w/2+4} h${(L*.38).toFixed(1)}" stroke="#fff" stroke-opacity=".8" stroke-width="2.6" stroke-linecap="round"/><path d="M${(L*.66).toFixed(1)} ${-w/2+4} h${(L*.12).toFixed(1)}" stroke="#9fb7cf" stroke-width="2.6" stroke-linecap="round"/></g>`};
+ const rod=(x1,y1,x2,y2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${B}" stroke-width="6" stroke-linecap="round"/>`;
+ const cap=(x,y,f)=>`<path d="M${x} ${y-14} Q${x+13*f} ${y-12} ${x+13*f} ${y} Q${x+13*f} ${y+12} ${x} ${y+14} Z" fill="${dk}" stroke="${B}" stroke-width="3.5" stroke-linejoin="round"/>`;
  const joint=(x,y,r=6)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${dk}" stroke="${B}" stroke-width="3"/>`;
  const hand=(x,y,a)=>`<g transform="translate(${x} ${y}) rotate(${a})"><path d="M-8 -6 Q-10 8 0 10 Q10 8 8 -6 Z" fill="${bl}" stroke="${B}" stroke-width="3" stroke-linejoin="round"/><path d="M-8 -2 l-6 -5" stroke="${B}" stroke-width="7" stroke-linecap="round"/><path d="M-8 -2 l-6 -5" stroke="${bl}" stroke-width="3.5" stroke-linecap="round"/><path d="M-3 -6 v-7 M2 -6 v-8 M7 -5 v-6" stroke="${B}" stroke-width="7" stroke-linecap="round"/><path d="M-3 -6 v-7 M2 -6 v-8 M7 -5 v-6" stroke="${bl}" stroke-width="3.5" stroke-linecap="round"/></g>`;
  return`<svg viewBox="0 0 240 300" class="morin" role="img" aria-label="もりんちゃん（装備 ${eq.size}/6）">
@@ -423,27 +489,28 @@ function morin(eq,o={}){const B='#3b2416',bl='#5b8fc9',dk='#3f6fa8',has=k=>eq.ha
  ${o.legend?`<circle cx="120" cy="150" r="118" fill="url(#${u}a)"/>${[[30,60],[208,70],[24,236],[214,214],[150,10]].map(([x,y])=>`<path d="M${x} ${y-9}l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="#ffd25a"/>`).join('')}`:''}
  <ellipse cx="120" cy="287" rx="60" ry="8" fill="#000" opacity=".12"/>
  ${has('team')?`<path d="M90 168 Q120 158 150 168 L182 258 Q120 274 58 258 Z" fill="#e2463f" stroke="${B}" stroke-width="4" stroke-linejoin="round"/><path d="M64 254 Q120 268 176 254" fill="none" stroke="#ffd25a" stroke-width="5"/>`:''}
- ${limb('106,236 105,266',12)}${limb('134,236 136,266',12)}
+ ${block(106,236,105,264,15)}${block(134,236,136,264,15)}
  <path d="M90 266 Q90 258 104 258 Q117 258 118 268 Q118 276 104 276 Q90 276 90 266Z" fill="${bl}" stroke="${B}" stroke-width="3"/><path d="M122 268 Q123 258 136 258 Q150 258 150 266 Q150 276 136 276 Q122 276 122 268Z" fill="${bl}" stroke="${B}" stroke-width="3"/>
  <path d="M96 263 q6 -3 12 -1 M128 262 q6 -3 12 0" stroke="#fff" stroke-opacity=".7" stroke-width="2.5" fill="none" stroke-linecap="round"/>
- <path d="M80 218 Q78 232 88 238 Q96 244 104 240 Q112 246 120 241 Q128 246 136 240 Q144 244 152 238 Q162 232 160 218 Z" fill="#fff" stroke="${B}" stroke-width="3.5" stroke-linejoin="round"/>
- <path d="M86 236 q4 4 8 0 q4 4 8 0 q4 4 8 0 q4 4 8 0 q4 4 8 0 q4 4 8 0 q4 4 8 0" fill="none" stroke="${B}" stroke-width="2"/>
- <path d="M94 166 Q120 158 146 166 Q154 192 158 222 Q120 232 82 222 Q86 192 94 166Z" fill="#b5d3ea" stroke="${B}" stroke-width="4" stroke-linejoin="round"/>
- <path d="M98 176 Q95 196 93 214" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="4" stroke-linecap="round"/>
- <path d="M108 168 Q104 186 107 198" fill="none" stroke="${has('basic')?'#f2b705':'#f4d93a'}" stroke-width="${has('basic')?5:4}" stroke-linecap="round"/><circle cx="107" cy="203" r="${has('basic')?6:5}" fill="${has('basic')?'#ffd25a':'#fff'}" stroke="${has('basic')?'#b88400':'#c9a400'}" stroke-width="3"/>
- <path d="M132 168 Q140 182 138 196 Q136 204 130 202" fill="none" stroke="${has('basic')?'#f2b705':'#8a96a6'}" stroke-width="${has('basic')?5:4}" stroke-linecap="round"/>
+
+ <path d="M80 162 Q120 152 160 162 Q156 194 144 222 Q120 230 96 222 Q84 194 80 162Z" fill="#b5d3ea" stroke="${B}" stroke-width="4" stroke-linejoin="round"/>
+ <path d="M92 172 Q96 196 102 214" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="4" stroke-linecap="round"/>
+ <path d="M82 222 q4.5 -6 9 0q4.5 -6 9 0q4.5 -6 9 0q4.5 -6 9 0q4.5 -6 9 0q4.5 -6 9 0q4.5 -6 9 0q4.5 -6 9 0 Q164 232 152 239 Q144 244 136 240 Q128 245 120 241 Q112 245 104 240 Q96 244 88 239 Q76 232 82 222 Z" fill="#fff" stroke="${B}" stroke-width="3.5" stroke-linejoin="round"/>
+
+ <path d="M99 160 Q86 180 94 197" fill="none" stroke="${B}" stroke-width="${has('basic')?8:7}" stroke-linecap="round"/><path d="M99 160 Q86 180 94 197" fill="none" stroke="${has('basic')?'#f2b705':'#f4d93a'}" stroke-width="${has('basic')?4.5:3.5}" stroke-linecap="round"/><circle cx="94" cy="202" r="${has('basic')?6:5}" fill="${has('basic')?'#ffd25a':'#fff'}" stroke="${has('basic')?'#b88400':'#c9a400'}" stroke-width="3"/>
+ <path d="M141 160 Q152 172 146 182 Q140 189 141 198 M146 182 Q152 189 151 198" fill="none" stroke="${B}" stroke-width="${has('basic')?8:7}" stroke-linecap="round" stroke-linejoin="round"/><path d="M141 160 Q152 172 146 182 Q140 189 141 198 M146 182 Q152 189 151 198" fill="none" stroke="${has('basic')?'#f2b705':'#9aa5b4'}" stroke-width="${has('basic')?4.5:3.5}" stroke-linecap="round" stroke-linejoin="round"/><circle cx="141" cy="199" r="2.6" fill="${B}"/><circle cx="151" cy="199" r="2.6" fill="${B}"/>${has('support')?`<g transform="translate(126 173) scale(.9)"><path d="M-4 4 L-10 20 L-6 18 L-3 22 L0 6 Z M4 4 L10 20 L6 18 L3 22 L0 6 Z" fill="#e8577f" stroke="${B}" stroke-width="2.5" stroke-linejoin="round"/><path d="M0 0 C-6 -10 -17 -9 -16 0 C-17 9 -6 10 0 0 Z M0 0 C6 -10 17 -9 16 0 C17 9 6 10 0 0 Z" fill="#f17a9b" stroke="${B}" stroke-width="2.5" stroke-linejoin="round"/><circle r="8.5" fill="#ffd25a" stroke="${B}" stroke-width="2.8"/><path d="M0 4.5 C-6.5 -1 -4.5 -6 0 -2.8 C4.5 -6 6.5 -1 0 4.5Z" fill="#e8577f"/></g>`:''}
  ${has('basic')?`<path d="M96 196l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" fill="#fff8c9"/>`:''}
- ${has('support')?`<g transform="translate(124 190)"><circle r="12" fill="#ffd25a" stroke="${B}" stroke-width="3"/><path d="M0 7 C-10 -1 -7 -9 0 -4 C7 -9 10 -1 0 7Z" fill="#e8577f"/></g>`:''}
- ${limb('92,176 74,190')}${joint(74,190,5)}${limb('74,190 60,182')}${hand(55,180,-60)}${joint(92,174)}
- ${limb('148,176 166,164')}${joint(166,164,5)}${limb('166,164 176,144')}${hand(178,136,20)}${joint(148,174)}
- ${has('judge')?`<line x1="184" y1="126" x2="196" y2="104" stroke="${B}" stroke-width="7" stroke-linecap="round"/><circle cx="203" cy="90" r="16" fill="#d9f2ff" fill-opacity=".85" stroke="#d29a00" stroke-width="5"/><circle cx="198" cy="85" r="4" fill="#fff"/>`:''}
- ${has('night')?`<circle cx="44" cy="212" r="28" fill="url(#${u}g)"/><line x1="52" y1="188" x2="45" y2="196" stroke="${B}" stroke-width="3"/><rect x="34" y="198" width="22" height="28" rx="5" fill="#ffe27a" stroke="${B}" stroke-width="3"/><rect x="31" y="195" width="28" height="6" rx="3" fill="#3f4a6b" stroke="${B}" stroke-width="2"/><rect x="31" y="224" width="28" height="6" rx="3" fill="#3f4a6b" stroke="${B}" stroke-width="2"/>`:''}
+ 
+ ${rod(72,178,58,188)}${block(58,188,42,174,15)}${hand(38,170,-60)}${cap(80,174,-1)}
+ ${rod(168,178,180,168)}${block(180,168,187,146,15)}${hand(189,138,20)}${cap(160,174,1)}
+ ${has('judge')?`<line x1="191" y1="128" x2="198" y2="106" stroke="${B}" stroke-width="7" stroke-linecap="round"/><circle cx="203" cy="90" r="16" fill="#d9f2ff" fill-opacity=".85" stroke="#d29a00" stroke-width="5"/><circle cx="198" cy="85" r="4" fill="#fff"/>`:''}
+ ${has('night')?`<circle cx="44" cy="212" r="28" fill="url(#${u}g)"/><line x1="37" y1="176" x2="45" y2="196" stroke="${B}" stroke-width="3"/><rect x="34" y="198" width="22" height="28" rx="5" fill="#ffe27a" stroke="${B}" stroke-width="3"/><rect x="31" y="195" width="28" height="6" rx="3" fill="#3f4a6b" stroke="${B}" stroke-width="2"/><rect x="31" y="224" width="28" height="6" rx="3" fill="#3f4a6b" stroke="${B}" stroke-width="2"/>`:''}
  <path d="M58 82 L48 58" stroke="${B}" stroke-width="3.5" stroke-linecap="round"/><circle cx="46" cy="54" r="6.5" fill="#e8577f" stroke="${B}" stroke-width="3"/>
  <path d="M66 78 Q48 80 48 98 Q48 116 66 118 Z" fill="${bl}" stroke="${B}" stroke-width="4" stroke-linejoin="round"/><path d="M174 78 Q192 80 192 98 Q192 116 174 118 Z" fill="${bl}" stroke="${B}" stroke-width="4" stroke-linejoin="round"/>
  <path d="M54 92 q2 -6 7 -8 M186 92 q-2 -6 -7 -8" stroke="#fff" stroke-opacity=".7" stroke-width="2.5" fill="none" stroke-linecap="round"/>
- <rect x="110" y="152" width="20" height="12" fill="${bl}" stroke="${B}" stroke-width="3"/>
+ 
  <circle cx="120" cy="97" r="60" fill="#eaf1fa" stroke="${B}" stroke-width="5"/>
- ${[[95,-1],[145,1]].map(([x,f])=>`<ellipse cx="${x}" cy="84" rx="15" ry="21.5" fill="#fff" stroke="${B}" stroke-width="3.5"/><ellipse cx="${x+1}" cy="89" rx="10" ry="14.5" fill="#4a2a16"/><circle cx="${x+3.5}" cy="83" r="4" fill="#fff"/><circle cx="${x-1}" cy="88" r="2" fill="#fff"/><path d="M${x+12*f} 72 q${5*f} 0 ${8*f} -6 M${x+8*f} 67 q${4*f} -2 ${5*f} -8 M${x+2*f} 64 q${2*f} -3 ${1*f} -9" fill="none" stroke="${B}" stroke-width="2.6" stroke-linecap="round"/>`).join('')}
+ ${[[95,-1],[145,1]].map(([x,f])=>`<ellipse cx="${x}" cy="84" rx="15" ry="21.5" fill="#fff" stroke="${B}" stroke-width="3.5"/><ellipse cx="${x-3.5*f}" cy="89" rx="10" ry="14.5" fill="#4a2a16"/><circle cx="${x-3.5*f+2.5}" cy="83" r="4" fill="#fff"/><circle cx="${x-3.5*f-2}" cy="88" r="2" fill="#fff"/><path d="M${x+12*f} 72 q${5*f} 0 ${8*f} -6 M${x+8*f} 67 q${4*f} -2 ${5*f} -8 M${x+2*f} 64 q${2*f} -3 ${1*f} -9" fill="none" stroke="${B}" stroke-width="2.6" stroke-linecap="round"/>`).join('')}
  <path d="M82 110 L157 106 A37.6 34 0 0 1 82 110 Z" fill="#f6eeeb" stroke="${B}" stroke-width="4" stroke-linejoin="miter" stroke-miterlimit="12"/>
  <path d="M119 139 C103 127 105 114 119 121.5 C133 114 135 127 119 139Z" fill="#e8577f"/>
  ${has('spec')?`<g transform="translate(6 -10) rotate(6 120 44)"><path d="M92 50 Q120 40 148 50 L148 62 Q120 54 92 62Z" fill="#333" stroke="${B}" stroke-width="3"/><polygon points="62,44 124,24 182,44 120,64" fill="#3d3d3d" stroke="${B}" stroke-width="3.5" stroke-linejoin="round"/><path d="M152 46 L170 52 L170 74" fill="none" stroke="#f2c230" stroke-width="3"/><rect x="166" y="72" width="8" height="12" rx="2" fill="#f2c230"/></g>`:''}
@@ -470,7 +537,7 @@ function vNurse(id){
  const secs=[{t:'基礎スキル',q:BASIC,st:1},{t:'専門スキル',q:SPEC,st:2,only:true},{t:'観察・判断力',q:LVQ.judge,st:3},{t:'患者・家族支援力',q:LVQ.support,st:4},{t:'チーム・リーダー力',q:LVQ.team,st:5},{t:'夜勤対応力',q:[['nt1'],...NIGHT],st:6}];
  const dots=(v,c,lv)=>{const mx=3;return`<span class="dots" aria-label="レベル${v}">${Array.from({length:mx},(_,k)=>k+1).map(k=>k===v?`<i class="on" style="background:${c}">${v}</i>`:'<i></i>').join('')}</span>`};
  const secHTML=(x,si)=>{let items=x.q.map((q,i)=>({q,i,v:n.a[q[0]]}));if(x.only)items=items.filter(o=>o.v!=null&&o.v!=='');
-  const rows=items.map(({q,v},k)=>{const ci=(k+si*3)%PILL.length;return`<div class="sk"><div class="pill" style="background:${PILL[ci]}">${esc(shortOf(q))}</div>${(()=>{const sc=q[0]==='nt1'?SC_N1:SC4;const has=v!=null&&v!=='';const vv=+v||0;return`<span class="lvt" style="${has&&vv>0?`background:${DOTC[ci]};color:#fff;opacity:${.5+vv*.125}`:''}">${has?esc(sc[vv]):'未回答'}</span>`})()}</div>`}).join('');
+  const rows=items.map(({q,v},k)=>{const ci=(k+si*3)%PILL.length;return`<div class="sk"><div class="pill" style="background:${PILL[ci]}">${esc(shortOf(q))}</div>${(()=>{const sc=q[0]==='nt1'?SC_N1:SC4;const has=v!=null&&v!=='';const vv=Math.round(+v||0);return`<span class="lvt" style="${has&&vv>0?`background:${DOTC[ci]};color:#fff;opacity:${.5+vv*.125}`:''}">${has?esc(sc[vv]):'未回答'}</span>`})()}</div>`}).join('');
   return`<div class="panel skl"><div class="hd"><b>${x.t}</b><span class="cnt">${items.length}</span></div>${rows||'<p class="muted" style="text-align:center">まだ登録された領域がありません</p>'}
   <button class="redo" data-step="${x.st}">✎ この項目を答え直す</button></div>`};
  app.innerHTML=`<section class="hero"><p class="adm" style="margin:0 0 8px;text-align:left"><a href="#list" style="color:#fff">← 一覧へ戻る</a></p><span class="name">${esc(n.name)}</span><p style="margin:10px 0 0;font-weight:700">総合力</p>
@@ -518,7 +585,7 @@ function vAssess(id){
  const LAST=STEPS.length-1;if(step>LAST)step=0;
  const app=$('#app');const has=k=>D.a[k]!=null;
  const answered=st=>st.prof?!!(D.name&&D.sid):st.spec?SPEC.some(q=>has(q[0])):(st.q||st.lv).every(q=>has(q[0]));
- const qHTML=(q,sc,o={})=>`<div class="q"><p>${esc(o.title||q[1])}</p>${o.sub?`<p class="muted" style="margin:-6px 0 10px;font-size:13px">含まれる内容：${esc(o.sub)}</p>`:''}<div class="opts four" role="radiogroup" aria-label="${esc(o.title||q[1])}">${sc.map((t,v)=>`<label class="opt"><input type="radio" name="${esc(q[0])}" value="${v}" ${has(q[0])&&+D.a[q[0]]===v?'checked':''}>${esc(t)}</label>`).join('')}</div></div>`;
+ const qHTML=(q,sc,o={})=>`<div class="q"><p>${esc(o.title||q[1])}</p>${o.sub?`<p class="muted" style="margin:-6px 0 10px;font-size:13px">含まれる内容：${esc(o.sub)}</p>`:''}<div class="opts four sp5" role="radiogroup" aria-label="${esc(o.title||q[1])}">${sc.map((t,v)=>`<label class="opt"><input type="radio" name="${esc(q[0])}" value="${v}" ${has(q[0])&&+D.a[q[0]]===v?'checked':''}><small>${v+1}</small>${lbl(t)}</label>`).join('')}</div></div>`;
  const st=STEPS[step];let body='';
  if(st.prof){body=`<div class="fields"><label class="field">職員番号<input id="f_sid" inputmode="numeric" autocomplete="off" value="${esc(D.sid||'')}" placeholder="例：12345"></label><label class="field">氏名<input id="f_name" value="${esc(D.name)}" autocomplete="off"></label>
   <label class="field">現在の所属部署<select id="f_dept">${deptOpts(D.dept)}</select></label>
@@ -528,14 +595,14 @@ function vAssess(id){
   <label class="field">資格・研修<select id="f_qual">${QUAL.map((q,i)=>`<option value="${i}" ${+D.qual===i?'selected':''}>${q[0]}</option>`).join('')}</select></label>
   <label class="field">対応可能な夜勤回数<select id="f_nav">${NAVAIL.map((t,i)=>`<option value="${i}" ${+D.navail===i?'selected':''}>${t}</option>`).join('')}</select></label></div>
   <p class="note">職員番号は、回答を一人ずつ区別するために使います。答え直すときも同じ職員番号を入れてください。経験年数・経験部署・夜勤回数は点数には入りません。</p>`}
- else if(st.spec){body='<p class="muted" style="margin:0 0 6px">経験のある領域をタップして、どのくらいできるかを選んでください。経験のない領域はそのままで大丈夫です。</p>'+SPEC.map(q=>`<div class="q"><label class="spchk"><input type="checkbox" data-sp="${esc(q[0])}" ${has(q[0])?'checked':''}>${esc(q[1])}</label><div class="opts four sp4" data-spo="${esc(q[0])}" style="margin-top:8px;${has(q[0])?'':'display:none'}">${SC4.map((t,v)=>v?`<label class="opt"><input type="radio" name="${esc(q[0])}" value="${v}" ${has(q[0])&&+D.a[q[0]]===v?'checked':''}>${esc(t)}</label>`:'').join('')}</div></div>`).join('')}
+ else if(st.spec){body='<p class="muted" style="margin:0 0 6px">経験のある領域をタップすると、3つの小項目が出ます。それぞれ「経験がない」〜「人に教えられる」の5段階から選んでください。経験のない領域はそのままで大丈夫です。</p>'+SPEC.map(q=>`<div class="q"><label class="spchk"><input type="checkbox" data-sp="${esc(q[0])}" ${has(q[0])?'checked':''}>${esc(q[1])}</label><div class="spsub" data-spo="${esc(q[0])}" style="${has(q[0])?'':'display:none'}">${(SPSUB[q[0]]||[]).map(sq=>`<p class="sqt">${esc(sq[1])}</p><div class="opts four sp5">${SC4.map((t,v)=>`<label class="opt"><input type="radio" name="${esc(sq[0])}" value="${v}" ${has(sq[0])&&+D.a[sq[0]]===v?'checked':''}><small>${v+1}</small>${lbl(t)}</label>`).join('')}</div>`).join('')}</div></div>`).join('')}
  else if(st.lv){body='<p class="muted" style="margin:0 0 6px">今のあなたに最も近い姿を選んでください（Ⅰ〜Ⅴは臨床能力評価表のレベルに対応しています）。</p>'+st.lv.map(q=>qHTML(q,['まだ当てはまらない',...q[2]],{lvl:1})).join('')}
  else{body=st.q.map(q=>q[0]==='nt1'?qHTML(q,SC_N1):qHTML(q,st.sc)).join('')}
  const TOTQ=BASIC.length+LVALL.length+NIGHT.length+1;
  app.innerHTML=`<div class="grid2 ga"><div>
  <h2>${ex?esc(ex.name)+'さんの回答（答え直し）':'スキルの回答'}</h2><p class="muted">全${TOTQ}問（専門スキルは経験のある領域だけ）・約7分。あてはまるものをタップしてください。</p>
- <div class="steps">${STEPS.map((x,i)=>`<button data-s="${i}" class="${i===step?'on':''} ${answered(x)?'done':''}">${i+1}. ${x.t}</button>`).join('')}</div>
- <h3>${step+1}. ${st.t}</h3><form id="frm">${body}</form><div id="msg"></div>
+ ${MODE==='r'?`<div class="stepbar"><span>ステップ <b>${step+1}</b> / ${STEPS.length}</span><span class="sdots">${STEPS.map((x,i)=>`<i class="${i<step?'d':i===step?'c':''}"></i>`).join('')}</span></div>`:`<div class="steps">${STEPS.map((x,i)=>`<button data-s="${i}" class="${i===step?'on':''} ${answered(x)?'done':''}">${i+1}. ${x.t}</button>`).join('')}</div>`}
+ <div class="${MODE==='r'?'qwrap':''}"><h3 class="${MODE==='r'?'qhead':''}">${step+1}. ${st.t}</h3><form id="frm">${body}</form></div><div id="msg"></div>
  <div class="tools" style="justify-content:space-between"><button id="prev" ${step===0?'disabled':''}>← 前へ</button>${step<LAST?'<button class="pri" id="next">次へ →</button>':'<button class="pri" id="fin">保存して送信</button>'}</div></div>
  <div class="sticky"><div class="panel live"><span class="muted">回答の進み具合</span><br><b id="lt">0</b><span class="muted" id="ltot"></span>
  <div class="bar" style="grid-template-columns:minmax(0,1fr);margin:12px 0 4px"><span class="t"><i id="lpb" style="width:0%"></i></span></div><p class="note" id="lc"></p>
@@ -546,8 +613,8 @@ function vAssess(id){
  const sync=()=>{if(st.prof){D.sid=nsid($('#f_sid').value);D.name=$('#f_name').value.trim();D.dept=$('#f_dept').value;D.years=$('#f_years').value;D.deptCount=$('#f_dc').value;D.curYears=$('#f_cy').value;D.qual=+$('#f_qual').value;D.navail=+$('#f_nav').value}};
  const live=()=>{sync();const ids=[...BASIC,...LVALL,['nt1'],...NIGHT].map(q=>q[0]);
   const done=ids.filter(has).length;$('#lt').textContent=done;$('#ltot').textContent=` / ${TOTQ} 問`;$('#lpb').style.width=(done/TOTQ*100)+'%';$('#lc').textContent=done<TOTQ?'未回答の問いは0点として計算されます。':'すべて回答しました。最後のステップで保存してください。'};
- $('#frm').addEventListener('change',e=>{const t=e.target;if(t.type==='radio')D.a[t.name]=+t.value;
-  if(t.dataset.sp){const o=$(`[data-spo="${t.dataset.sp}"]`);if(t.checked){o.style.display=''}else{o.style.display='none';delete D.a[t.dataset.sp];o.querySelectorAll('input').forEach(r=>r.checked=false)}}live()});$('#frm').addEventListener('input',live);
+ $('#frm').addEventListener('change',e=>{const t=e.target;if(t.type==='radio'){D.a[t.name]=+t.value;const pk=t.name.replace(/_\d+$/,'');if(SPSUB[pk]){const lv=spLv(D.a,pk);if(lv!=null)D.a[pk]=lv}}
+  if(t.dataset.sp){const o=$(`[data-spo="${t.dataset.sp}"]`);if(t.checked){o.style.display=''}else{o.style.display='none';delete D.a[t.dataset.sp];(SPSUB[t.dataset.sp]||[]).forEach(sq=>delete D.a[sq[0]]);o.querySelectorAll('input').forEach(r=>r.checked=false)}}live()});$('#frm').addEventListener('input',live);
  $('#frm').onsubmit=e=>e.preventDefault();live();
  const go=i=>{sync();step=i;vAssess(id);scrollTo({top:0})};
  document.querySelectorAll('.steps button').forEach(b=>b.onclick=()=>go(+b.dataset.s));
@@ -574,7 +641,7 @@ function vAnalysis(sub){
  const histo=(vals,lo,hi,step,lbl,mini,ref)=>{const nb=Math.round((hi-lo)/step),c=Array(nb).fill(0);vals.forEach(v=>{c[Math.min(nb-1,Math.max(0,Math.floor((v-lo)/step)))]++});const mx=Math.max(1,...c);const av=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;
   return`<div class="hist">${c.map((n,k)=>`<div class="col" data-t="${lo+k*step}〜${lo+(k+1)*step}${lbl}：${n}名"><span class="hn">${n||''}</span><span class="b" style="height:${n/mx*100}%"></span></div>`).join('')}<span class="havg" style="left:${(av-lo)/(hi-lo)*100}%" data-t="平均 ${r0(av)}${lbl}">${mini?'':`<em>平均${r0(av)}</em>`}</span>${ref!=null?`<span class="href" style="left:${(ref-lo)/(hi-lo)*100}%" data-t="全体の平均 ${r0(ref)}${lbl}"></span>`:''}</div><div class="hx">${Array.from({length:nb+1},(_,k)=>k).filter(k=>mini?true:k%2===0).map(k=>`<span style="left:${k/nb*100}%;transform:translateX(${k===0?0:k===nb?-100:-50}%)">${lo+k*step}</span>`).join('')}</div>`};
  const sgn=x=>(x>=0?'+':'−')+Math.abs(r0(x));
- const tabs=`<div class="subtabs"><a href="#analysis" class="${ALL?'':'on'}">部署ごとの分析</a><a href="#analysis-all" class="${ALL?'on':''}">全部署の比較</a></div>`;
+ const tabs=`<div class="subtabs"><a href="#analysis" class="${ALL?'':'on'}">部署ごとの分析</a><a href="#analysis-all" class="${ALL?'on':''}">全部署の比較</a><button class="prtbtn" data-prt="${ALL?'全部署の比較'+(AS.tg?'（'+esc(AS.tg)+'）':''):'部署ごとの分析'}">印刷（A4）</button></div>`;
  if(!ALL){
   if(!depts.some(x=>x.d.name===AS.rd))AS.rd=depts.slice().sort((a,b)=>b.c-a.c)[0].d.name;
   const x=depts.find(y=>y.d.name===AS.rd);const diff=x.avg-mAll;
@@ -586,7 +653,7 @@ function vAnalysis(sub){
   <div class="kcol"><div class="kbox"><span>一人あたり平均総合力</span><p class="bignum"><b>${r0(x.avg)}</b><span> / ${MAXT}点</span></p><em>全体の平均 ${r0(mAll)}点と比べて <b style="color:${diff>=0?'var(--good)':'var(--bad)'}">${sgn(diff)}点</b></em></div>
   <div class="kbox"><span>強み・伸びしろ</span><p class="sw"><span class="tag" style="border-color:var(--good);color:var(--good)">強み</span> ${AX[ord[0]].n} <b>${r0(x.av[ord[0]])}点</b></p><p class="sw"><span class="tag bad">伸びしろ</span> ${AX[ord[5]].n} <b>${r0(x.av[ord[5]])}点</b></p></div>
   <div class="kbox"><span>人数</span><p class="bignum"><b>${x.c}</b><span>名</span><b style="margin-left:14px">${x.lead}</b><span>名が夜勤リーダー可</span></p></div></div></div>
-  <h2 style="margin-top:30px">項目ごとのスコア</h2><p class="muted" style="margin:4px 0 12px">${esc(x.d.name)}の平均点と、全体の平均との差、メンバーの点数の分布（棒の上の数字は人数）です。</p><div class="legend big" style="margin:-4px 0 12px"><span><i style="background:var(--s1)"></i>メンバーの人数</span><span><i style="width:0;height:16px;border-left:3px dashed var(--ink);border-radius:0"></i>部署の平均</span><span><i style="width:4px;height:16px;background:var(--s2);border-radius:2px"></i>全体の平均</span></div>
+  <h2 class="pbreak" style="margin-top:30px">項目ごとのスコア</h2><p class="muted" style="margin:4px 0 12px">${esc(x.d.name)}の平均点と、全体の平均との差、メンバーの点数の分布（棒の上の数字は人数）です。</p><div class="legend big" style="margin:-4px 0 12px"><span><i style="background:var(--s1)"></i>メンバーの人数</span><span><i style="width:0;height:16px;border-left:3px dashed var(--ink);border-radius:0"></i>部署の平均</span><span><i style="width:4px;height:16px;background:var(--s2);border-radius:2px"></i>全体の平均</span></div>
   <div class="axcards">${AX.map((a,j)=>{const vv=x.ii.map(i=>scs[i].arr[j]);const d=x.av[j]-avg[j];return`<div class="panel axc"><h3>${a.n}</h3><p class="bignum"><b>${r0(x.av[j])}</b><span> / 100点</span></p><p class="cmp">全体 ${r0(avg[j])}点 <b style="color:${d>=0?'var(--good)':'var(--bad)'}">${sgn(d)}</b></p>${histo(vv,0,100,20,'点',1,avg[j])}</div>`}).join('')}</div>
   <div class="grid2" style="margin-top:26px;align-items:start"><div class="panel"><h3>専門領域の担い手（「一人でできる」以上）</h3>${x.cov.length?`<div class="covl">${x.cov.map(c=>`<div class="covr"><span>${esc(specName(c.id))}</span><b class="${c.c?'':'z'}">${c.c}名</b>${c.c?'':`<button class="tag bad gap" data-sk="q:${esc(c.id)}" data-th="3" data-ex="${esc(x.d.name)}">他部署から探す</button>`}</div>`).join('')}</div>`:'<p class="muted">この部署の専門領域は未設定です（設定・データで設定できます）。</p>'}
    ${x.low.length?`<p style="margin:14px 0 6px;font-weight:700">全体より低い項目</p>${x.low.map(j=>`<button class="tag gap" data-sk="ax:${j}" data-th="70" data-ex="${esc(x.d.name)}" style="margin:2px">${AX[j].n}が高い人を探す</button>`).join('')}`:''}</div>
@@ -607,21 +674,21 @@ function vAnalysis(sub){
   <div class="tools" style="margin:0">${[0,1,2].map(k=>`<select id="cmp${k}" aria-label="比べる部署${k+1}"><option value="">${k?'（なし）':''}</option>${groups.map(g=>{const ds=depts.filter(y=>(y.d.group||'未設定')===g);return ds.length?`<optgroup label="${esc(g)}">${ds.map(y=>`<option>${esc(y.d.name)}</option>`).join('')}</optgroup>`:''}).join('')}</select>`).join('')}</div>
   <div class="grid2" style="grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:center"><div class="fig radfig" id="crad"></div><div id="ctab"></div></div></div>
   <div class="panel" style="margin-top:18px"><div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between"><h3 style="font-size:20px">部署ごとの総合力と一人あたりの平均</h3>
-  <div class="tools" style="margin:0"><label for="ds" class="muted">並べ替え</label><select id="ds"><option value="avg">一人あたり平均が高い順</option><option value="total">部署の総合力が高い順</option><option value="order">部署の並び順</option></select></div></div>
+  <div class="tools" style="margin:0"><label for="ds" class="muted">並べ替え</label><select id="ds"><option value="order">部署の並び順（選択画面と同じ）</option><option value="avg">一人あたり平均が高い順</option><option value="total">部署の総合力が高い順</option></select></div></div>
   <div class="legend" style="margin:6px 0 4px"><span><i style="background:var(--s3)"></i>部署の総合力（全員の合計）</span><span><i style="background:var(--s1);border-radius:50%"></i>一人ひとりの総合力</span><span><i style="background:var(--ink);width:3px"></i>部署の平均</span></div><div id="drows"></div></div>
   <h2 style="margin-top:30px">部署×項目の比較</h2><p class="muted" style="margin-top:4px">各項目の部署平均（100点満点）。青は全体平均より高く、赤は低い項目です。専門領域の担い手がいない部署は <b id="nocov"></b>。</p>
   <div class="scroll"><table class="hm" id="dt"></table></div>
-  <h2 style="margin-top:30px">項目ごとのスコア（全体）</h2><p class="muted" style="margin:4px 0 12px">各項目100点満点の平均点と、点数の分布（棒の上の数字は人数）です。</p><div class="axcards" id="hax"></div>
+  <h2 class="pbreak" style="margin-top:30px">項目ごとのスコア（全体）</h2><p class="muted" style="margin:4px 0 12px">各項目100点満点の平均点と、点数の分布（棒の上の数字は人数）です。</p><div class="axcards" id="hax"></div>
   <div class="panel" id="find" style="margin-top:26px"><h2 style="margin-bottom:6px">スキルを持つ人を探す</h2>
  <div class="tools"><select id="sk" aria-label="探すスキル">${[...new Set(CAT.map(c=>c.grp))].map(g=>`<optgroup label="${esc(g)}">${CAT.filter(c=>c.grp===g).map(c=>`<option value="${esc(c.id)}" ${c.id===AS.sk?'selected':''}>${esc(c.label)}</option>`).join('')}</optgroup>`).join('')}</select>
  <select id="th" aria-label="条件"></select>
  <select id="sg" aria-label="所属で絞る"><option value="">すべての部署から</option>${groups.map(g=>`<option ${g===AS.grp?'selected':''}>${esc(g)}</option>`).join('')}</select>
  <label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="nt" style="min-height:0;width:18px;height:18px" ${AS.night?'checked':''}>夜勤可の人のみ</label></div>
  <div id="exb"></div><p id="fc" style="font-weight:700;margin:6px 0"></p><div class="scroll"><table id="ft"></table></div></div>`;
-  const drawAll=()=>{AS.tg=$('#tg').value;save();const rows=depts.filter(x=>!AS.tg||(x.d.group||'未設定')===AS.tg);const idx=rows.flatMap(x=>x.ii);const m=idx.length?idx.reduce((a,i)=>a+scs[i].sum,0)/idx.length:0;
+  const drawAll=()=>{AS.tg=$('#tg').value;save();const rows=depts.filter(x=>!AS.tg||(x.d.group||'未設定')===AS.tg).sort((a,b)=>deptRank(a.d.name)-deptRank(b.d.name));const idx=rows.flatMap(x=>x.ii);const m=idx.length?idx.reduce((a,i)=>a+scs[i].sum,0)/idx.length:0;
    const best=rows.slice().sort((a,b)=>b.avg-a.avg)[0];
    $('#ak').innerHTML=`<div class="kbox"><span>一人あたり平均総合力</span><p class="bignum"><b>${r0(m)}</b><span> / ${MAXT}点</span></p></div><div class="kbox"><span>対象</span><p class="bignum"><b>${idx.length}</b><span>名</span><b style="margin-left:12px">${rows.length}</b><span>部署</span></p></div><div class="kbox"><span>平均が最も高い部署</span><p class="bignum"><b style="font-size:28px">${best?esc(best.d.name):'−'}</b></p><em>${best?r0(best.avg)+'点':''}</em></div>`;
-   const ds=$('#ds').value;const dr=rows.slice().sort((a,b)=>ds==='avg'?b.avg-a.avg:ds==='total'?b.tot-a.tot:a.o-b.o);const mt=Math.max(1,...dr.map(x=>x.tot));
+   const ds=$('#ds').value;const dr=rows.slice().sort((a,b)=>ds==='avg'?b.avg-a.avg:ds==='total'?b.tot-a.tot:deptRank(a.d.name)-deptRank(b.d.name));const mt=Math.max(1,...dr.map(x=>x.tot));
    $('#drows').innerHTML=`<div class="drow dh"><span>部署</span><span class="n">人数</span><span>部署の総合力</span><span class="n">平均</span><span>一人ひとりの総合力（0〜${MAXT}点）</span></div>`+dr.map(x=>`<div class="drow"><b class="dn"><a href="#analysis" data-rd="${esc(x.d.name)}">${esc(x.d.name)}</a></b><span class="n">${x.c}名</span><span class="tb"><i style="width:${x.tot/mt*100}%"></i><em>${r0(x.tot)}</em></span><span class="n av">${r0(x.avg)}</span>
     <span class="strip">${x.ii.map(i=>`<i class="dot" style="left:${scs[i].sum/MAXT*100}%" data-t="${esc(N[i].name)}：${r0(scs[i].sum)}点"></i>`).join('')}<i class="avl" style="left:${x.avg/MAXT*100}%" data-t="${esc(x.d.name)} 平均 ${r0(x.avg)}点"></i></span></div>`).join('');
    $('#nocov').textContent=rows.filter(x=>x.cov.some(c=>c.c===0)).length+'部署';
@@ -645,7 +712,7 @@ function vAnalysis(sub){
   const hit=N.map((n,i)=>({n,i,v:val(n,i)})).filter(x=>x.v>=AS.th&&(!AS.grp||grpOf(x.n.dept)===AS.grp)&&(!AS.ex||x.n.dept!==AS.ex)&&(!AS.night||(+x.n.navail||0)>0)).sort((a,b)=>b.v-a.v||scs[b.i].total-scs[a.i].total);
   $('#exb').innerHTML=AS.ex?`<span class="tag" style="padding:6px 12px">${esc(AS.ex)} 以外から探しています <button id="exx" style="min-height:0;padding:0 6px;border:0;background:none;cursor:pointer" aria-label="条件を外す">✕</button></span>`:'';if($('#exx'))$('#exx').onclick=()=>{AS.ex='';find()};
   $('#fc').textContent=`「${c.label}」${$('#th').selectedOptions[0].text}の人：${hit.length}名`;
-  $('#ft').innerHTML=hit.length?`<thead><tr><th>氏名</th><th>現所属</th><th class="hide-s">部署グループ</th><th class="n">${c.kind==='ax'?'点数':'回答'}</th><th class="n">総合</th><th class="n hide-s">経験</th><th>夜勤</th></tr></thead><tbody>${hit.map(({n,i,v})=>`<tr class="click" data-id="${esc(n.id)}" tabindex="0"><td><b>${esc(n.name)}</b></td><td>${esc(n.dept)}</td><td class="hide-s muted">${esc(grpOf(n.dept))}</td><td class="n"><b style="color:var(--hot)">${c.kind==='ax'?r0(v):esc(SC4[v])}</b></td><td class="n">${r0(scs[i].total)}</td><td class="n hide-s">${esc(n.years)}年</td><td>${(+n.navail||0)?esc(NAVAIL[+n.navail]):'<span class="tag bad">不可</span>'}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="muted">条件に合う人がいません。条件をゆるめてみてください。</td></tr></tbody>';save()};
+  $('#ft').innerHTML=hit.length?`<thead><tr><th>氏名</th><th>現所属</th><th class="hide-s">部署グループ</th><th class="n">${c.kind==='ax'?'点数':'回答'}</th><th class="n">総合</th><th class="n hide-s">経験</th><th>夜勤</th></tr></thead><tbody>${hit.map(({n,i,v})=>`<tr class="click" data-id="${esc(n.id)}" tabindex="0"><td><b>${esc(n.name)}</b></td><td>${esc(n.dept)}</td><td class="hide-s muted">${esc(grpOf(n.dept))}</td><td class="n"><b style="color:var(--hot)">${c.kind==='ax'?r0(v):esc(SC4[Math.round(v)])}</b></td><td class="n">${r0(scs[i].total)}</td><td class="n hide-s">${esc(n.years)}年</td><td>${(+n.navail||0)?esc(NAVAIL[+n.navail]):'<span class="tag bad">不可</span>'}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="muted">条件に合う人がいません。条件をゆるめてみてください。</td></tr></tbody>';save()};
  thOpts();find();bindSync();
  $('#sk').onchange=()=>{thOpts();find()};$('#th').onchange=find;$('#sg').onchange=find;$('#nt').onchange=find;
  app.querySelectorAll('.gap').forEach(b=>b.onclick=()=>{AS.sk=b.dataset.sk;AS.th=+b.dataset.th;AS.ex=b.dataset.ex;AS.grp='';$('#sk').value=AS.sk;$('#sg').value='';thOpts();find();$('#find').scrollIntoView({behavior:'smooth',block:'start'})});
@@ -669,12 +736,12 @@ function parseRoster(t){const rows=parseCSV(t);if(!rows.length)throw new Error('
  if(!out.length)throw new Error('職員番号が読み取れませんでした');return out}
 function vStatus(){
  const app=$('#app');const R=S.roster||[];
- if(!R.length){app.innerHTML=syncBar()+`<div class="panel"><h2>職員名簿がまだありません</h2><p>「設定・データ」の「職員名簿」で、職員番号・氏名・部署のCSVを読み込むと、部署ごとの回答率と未回答の人の一覧が表示されます。</p><a class="btn pri" href="#settings" style="display:inline-flex;align-items:center;text-decoration:none">名簿を読み込む</a></div>`;bindSync();return}
+ if(!R.length){app.innerHTML=syncBar()+periodBanner()+`<div class="panel"><h2>職員名簿がまだありません</h2><p>「設定・データ」の「職員名簿」で、職員番号・氏名・部署のCSVを読み込むと、部署ごとの回答率と未回答の人の一覧が表示されます。</p><a class="btn pri" href="#settings" style="display:inline-flex;align-items:center;text-decoration:none">名簿を読み込む</a></div>`;bindSync();return}
  const by={};S.nurses.forEach(n=>{if(n.sid)by[n.sid]=n});const done=R.filter(r=>by[r.sid]);const rate=done.length/R.length*100;
  const extra=S.nurses.filter(n=>!n.sid||!R.some(r=>r.sid===n.sid));
  const dmap={};R.forEach(r=>{const k=r.dept||'（部署未設定）';(dmap[k]=dmap[k]||{d:k,t:0,a:0,list:[]}).t++;if(by[r.sid])dmap[k].a++;else dmap[k].list.push(r)});
- const order=S.depts.map(d=>d.name);const drows=Object.values(dmap).sort((a,b)=>{const ia=order.indexOf(a.d),ib=order.indexOf(b.d);return(ia<0?999:ia)-(ib<0?999:ib)});
- app.innerHTML=syncBar()+periodBanner()+`<h2>回答率は ${r0(rate)}%</h2><p class="muted" style="margin:4px 0 14px">名簿 ${R.length}名のうち ${done.length}名が回答済み${S.rosterAt?`（名簿の読み込み：${esc(S.rosterAt)}）`:''}${R.some(r=>r.sample)?'。表示中の名簿は架空のサンプルです':''}</p>
+ const order=S.depts.slice().sort((a,b)=>deptRank(a.name)-deptRank(b.name)).map(d=>d.name);const drows=Object.values(dmap).sort((a,b)=>{const ia=order.indexOf(a.d),ib=order.indexOf(b.d);return(ia<0?999:ia)-(ib<0?999:ib)});
+ app.innerHTML=syncBar()+`<div class="subtabs"><button class="prtbtn" data-prt="回答状況">印刷（A4）</button></div>`+periodBanner()+`<h2>回答率は ${r0(rate)}%</h2><p class="muted" style="margin:4px 0 14px">名簿 ${R.length}名のうち ${done.length}名が回答済み${S.rosterAt?`（名簿の読み込み：${esc(S.rosterAt)}）`:''}${R.some(r=>r.sample)?'。表示中の名簿は架空のサンプルです':''}</p>
  <div class="krow"><div class="kbox"><span>回答率</span><p class="bignum"><b>${r0(rate)}</b><span>%</span></p><div class="rbar"><i style="width:${rate}%"></i></div></div><div class="kbox"><span>回答済み</span><p class="bignum"><b>${done.length}</b><span> / ${R.length}名</span></p></div><div class="kbox"><span>まだ回答していない人</span><p class="bignum"><b style="color:var(--bad)">${R.length-done.length}</b><span>名</span></p></div></div>
  <div class="panel" style="margin-top:18px"><div style="display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;justify-content:space-between"><h3 style="font-size:20px">部署ごとの回答率</h3><div class="tools" style="margin:0"><label for="ss" class="muted">並べ替え</label><select id="ss"><option value="order">部署の並び順</option><option value="low">回答率が低い順</option></select></div></div>
  <div id="srows"></div></div>
@@ -766,9 +833,9 @@ function vHome(){
  </svg>`;
  $('#app').innerHTML=`<section class="home"><div><h2>${MODE==='r'?'もりんちゃんと<br>スキルアップしよう！':'あなたのスキルを、<br>見える形に。'}</h2>
  <p>${MODE==='r'?`${nq}の質問に答えると、あなたのスキルが、もりんちゃんのスキルポイントとレベルになります。スキルが伸びると装備がどんどん増えていきます。所要時間は約7分。`:`${nq}の質問に答えるだけで、6つの領域のスキルがスコアとチャートになります。所要時間は約7分です。`}</p>
- ${MODE==='r'?periodBanner():''}${MODE==='r'&&pState()!=='open'?'':`<a class="go" href="#assess">${MODE==='r'&&S.nurses[0]?'もう一度答える →':'はじめる →'}</a>`}${MODE==='r'?(S.nurses[0]?'<a class="sub" href="#mine">前回の結果を見る</a>':''):'<a class="sub" href="#list">結果を見る</a>'}</div>
+ ${MODE==='r'?periodBanner():''}${MODE==='r'&&pState()!=='open'?'':`<div class="gostart">${MODE==='r'?'<span class="gohint">ここからスタート！</span>':''}<a class="go ${MODE==='r'?'gor':''}" href="#assess">${MODE==='r'&&S.nurses[0]?'もう一度答える ▶':MODE==='r'?'回答をはじめる ▶':'はじめる →'}</a></div>`}${MODE==='r'?(S.nurses[0]?'<a class="sub" href="#mine">前回の結果を見る</a>':''):'<a class="sub" href="#list">結果を見る</a>'}</div>
  <div class="art ${MODE==='r'?'artm':''}">${MODE==='r'?`<div class="mrow">${[new Set(),new Set(['basic','support']),new Set(GEAR.map(g=>g.k))].map((e,k)=>`<div>${morin(e,{legend:k===2})}<span>${['見習い','一人前','レジェンド'][k]}</span></div>`).join('<i class="marr"></i>')}</div>`:art}</div></section>
- <div class="how"><div class="panel"><b class="no">1</b><h3>質問に答える</h3><p class="muted" style="margin:0">今の自分に一番近いものを選ぶだけ。正解や良い・悪いはありません。</p></div>
+ <h3 class="howh">回答の流れ</h3><div class="how"><div class="panel"><b class="no">1</b><h3>質問に答える</h3><p class="muted" style="margin:0">今の自分に一番近いものを選ぶだけ。正解や良い・悪いはありません。</p></div>
  <div class="panel"><b class="no">2</b><h3>スキルをスコア化</h3><p class="muted" style="margin:0">回答をもとに、6つの領域をそれぞれ100点満点で自動計算します。</p></div>
  <div class="panel"><b class="no">3</b><h3>チャートで確認</h3><p class="muted" style="margin:0">総合力グラフとスキルごとのレベルで、得意な領域がひと目でわかります。</p></div></div>
  <h3 style="margin:28px 0 0">スコア化する6つの領域</h3><div class="axchips">${AX.map(a=>`<span>${a.n}</span>`).join('')}</div>`}
