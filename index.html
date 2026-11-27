@@ -279,6 +279,17 @@ body.pmode .srow{font-size:12px;padding:4px 0}
 .how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}
 .how .panel{display:grid;gap:6px}.how b.no{font:800 30px/1 "M PLUS Rounded 1c",sans-serif;color:var(--hot)}
 .axchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.axchips span{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-weight:700;font-size:14px}
+.amenu{grid-template-columns:repeat(2,minmax(0,1fr))}.amenu .panel{border:1.5px solid #c9d9ee!important;background:#f4f8fd!important;transition:.15s}.amenu .panel:hover{border-color:#2f7fe0!important;background:#eaf2fd!important}
+.tsel{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;padding:14px 18px}.tsel label{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--sub);font-size:14px}.tsel select{min-width:200px}.tarr{color:#2f7fe0;font-weight:900;font-size:18px}
+.tkpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:24px}.tkpi .panel{padding:16px 18px}.tkpi span{display:block;color:var(--sub);font-size:13px;font-weight:700}.tkpi b{display:block;font-size:26px;margin-top:4px;font-variant-numeric:tabular-nums}.tkpi b small{font-size:14px;margin-left:2px}.tkpi em{font-style:normal;font-weight:800;font-size:15px}
+.tkpi .tud{font-size:15px;display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 4px}.tud i{font-style:normal}
+.tup{color:light-dark(#0e8f7e,#3fd1bd)!important}.tdn{color:var(--bad)!important}
+.ttbl td .tb{display:block;position:relative;height:12px;margin-top:5px;max-width:220px}.tb i{position:absolute;left:0;height:5px;border-radius:3px}.tb .b0{top:0;background:#9aa7b8}.tb .b1{top:6px;background:#2f7fe0}
+.ttbl th{line-height:1.3}.ttbl tr.click{cursor:pointer}.ttbl tr.click:hover{background:color-mix(in srgb,var(--s1) 7%,transparent)}
+ol.tq{margin:6px 0 0;padding-left:22px}ol.tq li{padding:6px 0;border-bottom:1px solid var(--line)}ol.tq li span{display:inline}ol.tq li b{margin-left:10px;white-space:nowrap}ol.tq li small{color:var(--sub);margin-left:6px}
+ol.tsteps{margin:10px 0 0;padding-left:22px;line-height:1.9}
+@media(max-width:760px){.tkpi{grid-template-columns:minmax(0,1fr)}}
+body.pmode .tsel{display:none!important}body.pmode .tkpi{gap:8px;margin-bottom:10px}body.pmode .tkpi b{font-size:16px}
 @media(max-width:760px){.home{grid-template-columns:minmax(0,1fr)}.how{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:860px){.grid2,.ga{grid-template-columns:minmax(0,1fr)}.sticky{position:static}}
 @media(max-width:600px){.fig{min-height:320px}.bar{grid-template-columns:6.5em minmax(0,1fr) 2.6em}table{font-size:13px}th,td{padding:6px 4px}.hide-s{display:none}}
@@ -291,8 +302,8 @@ body.pmode .srow{font-size:12px;padding:4px 0}
   <nav id="nav">
     <a href="#home" data-r="home">ホーム</a>
     <a href="#list" data-r="list">組織・一覧</a>
-    <a href="#assess" data-r="assess">回答する</a>
     <a href="#analysis" data-r="analysis">部署のスキル分析</a>
+    <a href="#trend" data-r="trend">経時変化</a>
     <a href="#status" data-r="status">回答状況</a>
     <a href="#settings" data-r="settings">設定・データ</a>
   </nav>
@@ -406,6 +417,7 @@ function radar(box,series,opt={}){
    h+=`<text x="${p[0]+ox}" y="${y0}" text-anchor="${anc}" font-size="${fs}" fill="var(--ink)" font-weight="500">${ln.map((t,k)=>`<tspan x="${p[0]+ox}" dy="${k?lh:0}">${t}${k===ln.length-1?`<tspan font-weight="700">${val}</tspan>`:''}</tspan>`).join('')}</text>`});
   s.innerHTML=h};
  const ro=new ResizeObserver(draw);ro.observe(s);RO.push(ro);draw()}
+if(MODE==='a'){const hp=document.querySelector('.top .row p');if(hp)hp.textContent='回答結果の確認・分析'}
 if(MODE==='r')$('#nav').innerHTML='<a href="#home" data-r="home">ホーム</a><a href="#assess" data-r="assess">回答する</a><a href="#mine" data-r="mine">自分の結果</a>';
 function doPrint(title){let ph=document.getElementById('phead');if(!ph){ph=document.createElement('div');ph.id='phead';document.getElementById('app').prepend(ph)}
  ph.innerHTML=`<b>看護スキル総合力マップ</b><span>${esc(title)}</span><span>出力日：${new Date().toLocaleDateString('ja-JP')}</span>`;
@@ -420,7 +432,7 @@ function bestDepts(n,sc){return S.depts.map(d=>({d,f:fit(n,d,sc)})).sort((a,b)=>
 // ---------- views ----------
 function vList(){
  const N=S.nurses;const scs=N.map(score);const app=$('#app');
- if(!N.length){app.innerHTML=syncBar()+`<div class="panel"><h2>まだ回答がありません</h2><p>「回答する」から1人目を登録するか、設定でサンプルデータを読み込んでください。</p><a class="btn pri" href="#assess" style="display:inline-block;text-decoration:none">回答をはじめる</a></div>`;bindSync();return}
+ if(!N.length){app.innerHTML=syncBar()+`<div class="panel"><h2>まだ回答がありません</h2><p>看護師さんの回答は、上の「スプレッドシートから読み込む」で表示されます。</p></div>`;bindSync();return}
  const avg=AX.map((_,i)=>scs.reduce((a,s)=>a+s.arr[i],0)/N.length);const tot=avg.reduce((a,b)=>a+b,0)/AX.length;
  const order=avg.map((v,i)=>i).sort((a,b)=>avg[a]-avg[b]);const weak=order[0],strong=order[5];
  const leaders=N.filter(nightLeader).length;const deps=[...new Set(N.map(n=>n.dept))];
@@ -430,7 +442,7 @@ function vList(){
  <h3 style="margin:18px 0 10px">領域別の平均</h3>${barsHTML(avg,[weak])}
  <p class="note">赤は組織で最も低い領域。研修計画の優先度づけの目安に。</p></div></div>
  <h2 style="margin-top:36px">看護師一覧</h2>
- <div class="tools"><input id="q" placeholder="氏名で検索" aria-label="氏名で検索"><select id="fd" aria-label="部署で絞り込み"><option value="">すべての部署</option>${deps.map(d=>`<option>${esc(d)}</option>`).join('')}</select><a class="btn pri" href="#assess" style="text-decoration:none;display:inline-flex;align-items:center">＋ 新しく回答する</a></div>
+ <div class="tools"><input id="q" placeholder="氏名で検索" aria-label="氏名で検索"><select id="fd" aria-label="部署で絞り込み"><option value="">すべての部署</option>${deps.map(d=>`<option>${esc(d)}</option>`).join('')}</select></div>
  <div class="scroll"><table id="tbl"><thead><tr><th>氏名</th><th>現所属</th><th class="n">総合</th><th class="hide-s">6領域</th><th>得意な領域</th></tr></thead><tbody></tbody></table></div>
  ${N.some(n=>n.sample)?'<p class="note">表示中の看護師は架空のサンプルデータです。設定からまとめて削除できます。</p>':''}`;
  radar($('#orgR'),[{name:'組織平均',v:avg,c:'var(--s1)'}]);bindSync();
@@ -453,12 +465,27 @@ function sheetRow(n){const s=score(n);const r={id:n.id,'職員番号':n.sid||'',
 async function sendSheet(n){const u=gasUrl();if(!u)throw new Error('nourl');const res=await fetch(u,{method:'POST',body:JSON.stringify({row:sheetRow(n)})});const j=await res.json();if(!j.ok)throw new Error(j.error||'ng');return true}
 function fromSheetRow(o){const a={};Object.keys(o).forEach(k=>{if(k.includes('｜')){const v=o[k];if(v!==''&&v!=null&&!isNaN(+v))a[k.split('｜')[0]]=Math.max(0,Math.min(4,+v))}});
  const tx=v=>String(v??'').replace(/^'/,'');
- return{id:tx(o.id).slice(0,40),sid:nsid(o['職員番号']),name:tx(o['氏名']).slice(0,60),dept:tx(o['所属部署']).slice(0,60),years:+o['経験年数']||0,deptCount:+o['経験部署数']||1,curYears:+o['現部署年数']||0,qual:Math.max(0,QUAL.findIndex(q=>q[0]===o['資格'])),navail:Math.max(0,NAVAIL.indexOf(o['夜勤可能回数'])),updated:tx(o['更新日']).slice(0,10),recv:tx(o['受信日時']),a,src:'sheet'}}
+ return{id:tx(o.id).slice(0,40),sid:nsid(o['職員番号']),name:tx(o['氏名']).slice(0,60),dept:tx(o['所属部署']).slice(0,60),years:+o['経験年数']||0,deptCount:+o['経験部署数']||1,curYears:+o['現部署年数']||0,qual:Math.max(0,QUAL.findIndex(q=>q[0]===o['資格'])),navail:Math.max(0,NAVAIL.indexOf(o['夜勤可能回数'])),updated:tx(o['更新日']).slice(0,10),recv:tx(o['受信日時']),per:tx(o['回答期間']),a,src:'sheet'}}
 async function loadSheet(){const u=gasUrl(),k=S.gasKey;if(!u||!k)throw new Error('受付URLと管理者パスワードを入力してください');let j;
  try{const res=await fetch(u+(u.includes('?')?'&':'?')+'key='+encodeURIComponent(k)+'&t='+Date.now(),{cache:'no-store'});j=await res.json()}catch(e){throw new Error('スプレッドシートに接続できませんでした。通信状況と受付URLを確認してください')}
  if(!j.ok)throw new Error(j.error==='key'?'管理者パスワードが違います':'読み込みに失敗しました');
- const recs=(j.rows||[]).map(fromSheetRow).filter(r=>r.name&&r.id);const by={};recs.forEach(r=>{const key=r.sid||r.name.replace(/\s/g,'');if(!by[key]||String(r.recv)>String(by[key].recv))by[key]=r});const uniq=Object.values(by);
- const sids=new Set(uniq.map(r=>r.sid).filter(Boolean));S.nurses=S.nurses.filter(n=>n.src!=='sheet'&&!(uniq.length&&n.sample)&&!(n.sid&&sids.has(n.sid))).concat(uniq);if(uniq.length&&(S.roster||[]).some(r=>r.sample))S.roster=[];S.lastSync=new Date().toLocaleString('ja-JP');S.syncCount=uniq.length;save();return uniq.length}
+ const recs=(j.rows||[]).map(fromSheetRow).filter(r=>r.name&&r.id);const kk=r=>r.sid||r.name.replace(/\s/g,'');
+ const bp={};recs.forEach(r=>{const key=r.per+'#'+kk(r);if(!bp[key]||String(r.recv)>String(bp[key].recv))bp[key]=r});const all=Object.values(bp);setHist(all);
+ const cur=perLabel(S.period),pl=perList(all);const useP=all.some(r=>r.per===cur)?cur:(pl.length?pl[pl.length-1].k:'');
+ const uniq=all.filter(r=>r.per===useP);
+ const sids=new Set(uniq.map(r=>r.sid).filter(Boolean));S.nurses=S.nurses.filter(n=>n.src!=='sheet'&&!(all.length&&n.sample)&&!(n.sid&&sids.has(n.sid))).concat(uniq);if(uniq.length&&(S.roster||[]).some(r=>r.sample))S.roster=[];S.lastSync=new Date().toLocaleString('ja-JP');S.syncCount=uniq.length;S.viewPer=useP;save();return uniq.length}
+// ---------- 回答期間ごとの記録（経時変化） ----------
+const HKEY=KEY+'.hist';let HIST=null;
+const perLabel=P=>{P=P||{};return P.start||P.end?(P.start||'')+'〜'+(P.end||''):'期間指定なし'};
+const fmtPer=k=>!k?'以前の回答（期間の記録なし）':String(k).replace(/(\d{4})-(\d{2})-(\d{2})/g,(m,y,mo,d)=>`${y}/${+mo}/${+d}`);
+function setHist(all){const ids=qids();HIST=all.map(r=>({...r}));try{localStorage.setItem(HKEY,JSON.stringify(all.map(r=>({per:r.per,sid:r.sid,id:r.id,name:r.name,dept:r.dept,years:r.years,deptCount:r.deptCount,curYears:r.curYears,qual:r.qual,navail:r.navail,recv:r.recv,v:ids.map(q=>r.a[q]==null?'':Math.round(r.a[q]*100)/100).join(',')}))))}catch(e){}}
+function getHist(){if(HIST)return HIST;try{const t=localStorage.getItem(HKEY);if(t){const ids=qids();HIST=JSON.parse(t).map(o=>{const a={};String(o.v||'').split(',').forEach((x,k)=>{if(x!==''&&ids[k])a[ids[k]]=+x});const r={...o,a};delete r.v;return r});return HIST}}catch(e){}return[]}
+function perList(H){const m={};H.forEach(r=>{const x=m[r.per]=m[r.per]||{k:r.per,n:0,first:r.recv||''};x.n++;if(String(r.recv)<String(x.first))x.first=r.recv});
+ return Object.values(m).sort((a,b)=>{const da=(a.k.match(/\d{4}-\d{2}-\d{2}/)||[a.first])[0],db=(b.k.match(/\d{4}-\d{2}-\d{2}/)||[b.first])[0];return !a.k?-1:!b.k?1:String(da).localeCompare(String(db))})}
+function sampleHist(){const cur=S.nurses.filter(n=>n.sample);if(!cur.length)return[];let seed=11;const rnd=()=>(seed=seed*16807%2147483647)/2147483647;const P0='2026-05-11〜2026-05-31',P1='2026-11-09〜2026-11-30';
+ const prev=cur.filter(()=>rnd()>.12).map(n=>{const a={};const yr=Math.min(1,(n.years||1)/10);Object.keys(n.a).forEach(k=>{const v=+n.a[k];a[k]=Math.max(0,Math.round((v-rnd()*(1.1-yr*.6)+.15)*100)/100)});
+  SPEC.forEach(q=>{if(a[q[0]]!=null&&(SPSUB[q[0]]||[]).length){const t=SPSUB[q[0]].map(sq=>a[sq[0]]).filter(x=>x!=null);if(t.length)a[q[0]]=t.reduce((x,y)=>x+y,0)/t.length}});
+  return{...n,a,per:P0,recv:'2026-05-20',sample:true}});return prev.concat(cur.map(n=>({...n,per:P1,recv:'2026-11-20'})))}
 const todayJ=()=>new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Tokyo'});
 const fmtD=d=>{if(!d)return'';const t=new Date(d+'T00:00:00+09:00');return isNaN(t)?esc(d):`${t.getMonth()+1}月${t.getDate()}日（${'日月火水木金土'[t.getDay()]}）`};
 function deptRank(name){const gs=[...new Set([...GROUPS,...S.depts.map(d=>d.group||'未設定')])];const i=S.depts.findIndex(d=>d.name===name);if(i<0)return 1e6;return gs.indexOf(S.depts[i].group||'未設定')*1000+i}
@@ -539,7 +566,7 @@ function vNurse(id){
  const secHTML=(x,si)=>{let items=x.q.map((q,i)=>({q,i,v:n.a[q[0]]}));if(x.only)items=items.filter(o=>o.v!=null&&o.v!=='');
   const rows=items.map(({q,v},k)=>{const ci=(k+si*3)%PILL.length;return`<div class="sk"><div class="pill" style="background:${PILL[ci]}">${esc(shortOf(q))}</div>${(()=>{const sc=q[0]==='nt1'?SC_N1:SC4;const has=v!=null&&v!=='';const vv=Math.round(+v||0);return`<span class="lvt" style="${has&&vv>0?`background:${DOTC[ci]};color:#fff;opacity:${.5+vv*.125}`:''}">${has?esc(sc[vv]):'未回答'}</span>`})()}</div>`}).join('');
   return`<div class="panel skl"><div class="hd"><b>${x.t}</b><span class="cnt">${items.length}</span></div>${rows||'<p class="muted" style="text-align:center">まだ登録された領域がありません</p>'}
-  <button class="redo" data-step="${x.st}">✎ この項目を答え直す</button></div>`};
+  ${MODE==='a'?'':`<button class="redo" data-step="${x.st}">✎ この項目を答え直す</button>`}</div>`};
  app.innerHTML=`<section class="hero"><p class="adm" style="margin:0 0 8px;text-align:left"><a href="#list" style="color:#fff">← 一覧へ戻る</a></p><span class="name">${esc(n.name)}</span><p style="margin:10px 0 0;font-weight:700">総合力</p>
  <p class="big grow">${r0(sum)}<small> / ${MAXT}</small></p>
  <div class="chips">${MODE==='a'&&n.sid?`<div class="chip"><span>職員番号</span><b>${esc(n.sid)}</b></div>`:''}<div class="chip"><span>所属</span><b>${esc(n.dept)}</b></div><div class="chip"><span>経験年数</span><b>${esc(n.years)}年</b></div><div class="chip"><span>夜勤</span><b>${esc(NAVAIL[+n.navail||0].replace('（0回）',''))}</b></div></div></section>
@@ -551,7 +578,7 @@ function vNurse(id){
  <h3 style="margin:16px 0 8px">育成の課題と打ち手</h3><ul style="margin:0;padding-left:1.2em">${low.map(i=>`<li><b>${AX[i].n}</b>（${r0(s.arr[i])}点）：${ADV[AX[i].k]}</li>`).join('')}</ul>
 </div></div></div>
  <h2 style="margin:34px 0 14px">スキルの内訳</h2><div class="cols3">${secs.map(secHTML).join('')}</div>
- <div class="tools" style="margin-top:22px"><a class="btn pri" href="#assess-${esc(n.id)}" style="text-decoration:none;display:inline-flex;align-items:center">全部の回答を見直す</a><button class="warn adm" id="del">この回答を削除</button></div><div id="delbox"></div>`;
+ <div class="tools" style="margin-top:22px"><button class="warn adm" id="del">この回答を削除</button></div><div id="delbox"></div>`;
  app.querySelectorAll('.redo').forEach(b=>b.onclick=()=>{D=null;step=+b.dataset.step;location.hash='assess-'+n.id});
  const C=['var(--s1)','var(--s2)','var(--s3)'];
  const upd=()=>{const ser=[{name:n.name,v:s.arr,c:C[0]}];[$('#c1').value,$('#c2').value].forEach((cid,k)=>{const o=S.nurses.find(x=>x.id===cid);if(o)ser.push({name:o.name,v:score(o).arr,c:C[ser.length]})});
@@ -734,10 +761,73 @@ function parseRoster(t){const rows=parseCSV(t);if(!rows.length)throw new Error('
  if(h.some(x=>x.includes('職員番号'))){const f=k=>h.findIndex(x=>k.some(y=>x.includes(y)));ix={sid:f(['職員番号']),name:f(['氏名','名前']),dept:f(['所属','部署'])};body=rows.slice(1)}
  const out=[],seen=new Set();body.forEach(r=>{const sid=nsid(r[ix.sid]);if(!sid||seen.has(sid))return;seen.add(sid);out.push({sid,name:String(r[ix.name]??'').trim().slice(0,60),dept:String(r[ix.dept]??'').trim().slice(0,60)})});
  if(!out.length)throw new Error('職員番号が読み取れませんでした');return out}
+// ---------- 経時変化 ----------
+const TS={p0:'',p1:'',d:''};
+function vTrend(){
+ const app=$('#app');let H=getHist(),smp=false;
+ if(!H.length){const sh=sampleHist();if(sh.length){H=sh;smp=true}}
+ const PL=perList(H);
+ if(PL.length<2){app.innerHTML=syncBar()+`<div class="panel"><h2>経時変化</h2><p>回答期間ごとの回答を比べて、スキルがどう変わったかを見る画面です。比べるには、2回分以上の回答期間の回答が必要です。</p><p class="muted">今の記録：${PL.length?PL.map(p=>esc(fmtPer(p.k))+'（'+p.n+'名）').join('、'):'まだ読み込まれていません'}</p><ol class="tsteps"><li>今回の回答期間で回答を集めます。</li><li>次の回は「設定・データ」で新しい回答期間を設定して、もう一度回答を集めます。</li><li>「最新の回答を読み込む」を押すと、ここで前回と今回を比べられます。</li></ol></div>`;bindSync();return}
+ if(!PL.some(p=>p.k===TS.p1))TS.p1=PL[PL.length-1].k;
+ if(!PL.some(p=>p.k===TS.p0)||TS.p0===TS.p1){const i1=PL.findIndex(p=>p.k===TS.p1);TS.p0=(PL[i1-1]||PL.find(p=>p.k!==TS.p1)).k}
+ const key=r=>r.sid||String(r.name).replace(/\s/g,'');
+ const A0=H.filter(r=>r.per===TS.p0),A1=H.filter(r=>r.per===TS.p1);
+ const inD=r=>!TS.d||r.dept===TS.d;
+ const S0=A0.filter(inD).map(r=>({r,s:score(r)})),S1=A1.filter(inD).map(r=>({r,s:score(r)}));
+ const m0={};A0.forEach(r=>m0[key(r)]=r);
+ const pairs=A1.filter(inD).filter(r=>m0[key(r)]).map(r=>{const r0=m0[key(r)];return{r1:r,r0,s1:score(r),s0:score(r0)}});
+ const mean=(L,f)=>L.length?L.reduce((a,x)=>a+f(x),0)/L.length:0;
+ const av0=AX.map((_,i)=>mean(S0,x=>x.s.arr[i])),av1=AX.map((_,i)=>mean(S1,x=>x.s.arr[i]));
+ const t0=mean(S0,x=>x.s.sum),t1=mean(S1,x=>x.s.sum);
+ const pd=AX.map((_,i)=>mean(pairs,x=>x.s1.arr[i]-x.s0.arr[i])),pt=mean(pairs,x=>x.s1.sum-x.s0.sum);
+ const up=pairs.filter(x=>x.s1.sum-x.s0.sum>=10).length,dn=pairs.filter(x=>x.s1.sum-x.s0.sum<=-10).length,flat=pairs.length-up-dn;
+ const sg=x=>{const v=r0(x);return v>0?'+'+v:v<0?'−'+(-v):'±0'};
+ const sg1=x=>{const v=Math.round(x*10)/10;return v>0?'+'+v.toFixed(1):v<0?'−'+(-v).toFixed(1):'±0'};
+ const dc=(x,t=1)=>x>=t?'tup':x<=-t?'tdn':'';
+ // 質問ごとの変化（同じ人で比較）
+ const spP=new Set(SPEC.map(q=>q[0]));
+ const qd=QIDS().filter(q=>!spP.has(q[0])).map(q=>{const d=[];pairs.forEach(x=>{const a=x.r0.a[q[0]],b=x.r1.a[q[0]];if(a!=null&&a!==''&&b!=null&&b!=='')d.push(+b-+a)});return{q,n:d.length,m:d.length?d.reduce((a,b)=>a+b,0)/d.length:0}}).filter(x=>x.n>=Math.min(3,Math.max(1,pairs.length)));
+ const qUp=qd.filter(x=>x.m>0.05).sort((a,b)=>b.m-a.m).slice(0,5),qDn=qd.filter(x=>x.m<-0.05).sort((a,b)=>a.m-b.m).slice(0,5);
+ const qList=(L,none)=>L.length?`<ol class="tq">${L.map(x=>`<li><span>${esc(shortOf(x.q))}</span><b class="${dc(x.m,.05)}">${sg1(x.m)}段階</b><small>${x.n}名</small></li>`).join('')}</ol>`:`<p class="muted">${none}</p>`;
+ const pOpt=sel=>PL.map(p=>`<option value="${esc(p.k)}" ${p.k===sel?'selected':''}>${esc(fmtPer(p.k))}（${p.n}名）</option>`).join('');
+ const lbl0=fmtPer(TS.p0),lbl1=fmtPer(TS.p1),tgt=TS.d||'病院全体';
+ // 部署ごとの表 or 個人の表
+ let lower='';
+ if(!TS.d){
+  const ds=S.depts.slice().sort((a,b)=>deptRank(a.name)-deptRank(b.name)).map(d=>{const x0=A0.filter(r=>r.dept===d.name).map(score),x1=A1.filter(r=>r.dept===d.name).map(score);if(!x0.length&&!x1.length)return null;
+   const a0=AX.map((_,i)=>mean(x0,s=>s.arr[i])),a1=AX.map((_,i)=>mean(x1,s=>s.arr[i]));return{d:d.name,n0:x0.length,n1:x1.length,s0:mean(x0,s=>s.sum),s1:mean(x1,s=>s.sum),dd:AX.map((_,i)=>a1[i]-a0[i]),both:x0.length&&x1.length}}).filter(Boolean);
+  lower=`<div class="panel"><h3>部署ごとの変化</h3><p class="muted" style="margin:2px 0 10px">部署ごとの平均の差（今回 − 前回）。行を押すと、その部署の詳しい変化を表示します。</p><div class="scroll"><table class="ttbl"><thead><tr><th>部署</th><th class="n">人数<br>前回→今回</th><th class="n">平均の総合力<br>前回→今回</th><th class="n">差</th>${AX.map(a=>`<th class="n hide-s">${a.s||a.n}</th>`).join('')}</tr></thead><tbody>${ds.map(x=>`<tr class="click" data-d="${esc(x.d)}" tabindex="0"><td><b>${esc(x.d)}</b></td><td class="n">${x.n0}→${x.n1}</td><td class="n">${x.n0?r0(x.s0):'—'}→${x.n1?r0(x.s1):'—'}</td><td class="n"><b class="${x.both?dc(x.s1-x.s0,5):''}">${x.both?sg(x.s1-x.s0):'—'}</b></td>${x.dd.map(v=>`<td class="n hide-s"><span class="${x.both?dc(v,3):''}">${x.both?sg(v):'—'}</span></td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+ }else{
+  const L=pairs.map(x=>{const d=x.s1.arr.map((v,i)=>v-x.s0.arr[i]);const bi=d.indexOf(Math.max(...d));return{x,diff:x.s1.sum-x.s0.sum,bi,bv:d[bi]}}).sort((a,b)=>b.diff-a.diff);
+  const only1=A1.filter(inD).filter(r=>!m0[key(r)]).length;
+  lower=`<div class="panel"><h3>${esc(TS.d)}：一人ひとりの変化</h3><p class="muted" style="margin:2px 0 10px">前回と今回の両方に回答した${pairs.length}名${only1?`（今回はじめて回答した人：${only1}名）`:''}</p><div class="scroll"><table class="ttbl"><thead><tr><th>氏名</th><th class="n">前回</th><th class="n">今回</th><th class="n">差</th><th>一番伸びた領域</th></tr></thead><tbody>${L.map(o=>`<tr><td><b>${esc(o.x.r1.name)}</b></td><td class="n">${r0(o.x.s0.sum)}</td><td class="n">${r0(o.x.s1.sum)}</td><td class="n"><b class="${dc(o.diff,10)}">${sg(o.diff)}</b></td><td>${o.bv>=1?`${AX[o.bi].n} <span class="tup">${sg(o.bv)}</span>`:'<span class="muted">—</span>'}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">両方の期間に回答した人がいません</td></tr>'}</tbody></table></div></div>`;
+ }
+ app.innerHTML=syncBar()+`<div class="subtabs"><button class="prtbtn" data-prt="経時変化（${esc(tgt)}）">印刷（A4）</button></div>
+ ${smp?'<p class="note">表示中は架空のサンプルデータです。2回分の回答期間の回答を読み込むと、実際のデータに切り替わります。</p>':''}
+ <div class="panel tsel"><label>前回<select id="tp0">${pOpt(TS.p0)}</select></label><span class="tarr">→</span><label>今回<select id="tp1">${pOpt(TS.p1)}</select></label><label>対象<select id="tdp"><option value="">病院全体</option>${deptOpts(TS.d)}</select></label></div>
+ ${TS.d?'<p style="margin:14px 0 0"><a href="#trend" id="tback">← 病院全体に戻る</a></p>':''}<h2 style="margin:18px 0 4px">${esc(tgt)}の経時変化</h2><p class="muted" style="margin:0 0 12px">前回：${esc(lbl0)}　／　今回：${esc(lbl1)}</p>
+ <div class="tkpi"><div class="panel"><span>回答者数</span><b>${S0.length}<small>名</small> → ${S1.length}<small>名</small></b></div>
+ <div class="panel"><span>平均の総合力（${MAXT}点）</span><b>${S0.length?r0(t0):'—'} → ${S1.length?r0(t1):'—'}</b>${S0.length&&S1.length?`<em class="${dc(t1-t0,5)}">${sg(t1-t0)}点</em>`:''}</div>
+ <div class="panel"><span>2回とも回答した人 ${pairs.length}名の変化</span><b class="tud"><i class="tup">伸びた ${up}</i><i>同じくらい ${flat}</i><i class="tdn">下がった ${dn}</i></b><em class="${dc(pt,5)}">平均 ${pairs.length?sg(pt)+'点':'—'}</em></div></div>
+ <div class="grid2"><div class="panel"><h3 style="text-align:center">6つの領域（平均）</h3><div class="fig" id="tR"></div><div class="legend" style="justify-content:center"><span><i style="background:#9aa7b8"></i>前回</span><span><i style="background:#2f7fe0"></i>今回</span></div></div>
+ <div class="panel"><h3>領域ごとの変化</h3><table class="ttbl"><thead><tr><th>領域</th><th class="n">前回</th><th class="n">今回</th><th class="n">差</th><th class="n">同じ人の<br>変化</th></tr></thead><tbody>${AX.map((a,i)=>`<tr><td><b>${a.n}</b><span class="tb"><i class="b0" style="width:${Math.max(1,av0[i])}%"></i><i class="b1" style="width:${Math.max(1,av1[i])}%"></i></span></td><td class="n">${r0(av0[i])}</td><td class="n">${r0(av1[i])}</td><td class="n"><b class="${dc(av1[i]-av0[i],3)}">${sg(av1[i]-av0[i])}</b></td><td class="n"><span class="${dc(pd[i],3)}">${pairs.length?sg(pd[i]):'—'}</span></td></tr>`).join('')}</tbody></table>
+ <p class="muted" style="font-size:12.5px;margin:8px 0 0">各領域100点。「差」は回答した人全体の平均の差、「同じ人の変化」は2回とも回答した人だけで比べた平均の変化です。</p></div></div>
+ <div class="grid2"><div class="panel"><h3>伸びた質問</h3>${qList(qUp,'目立って伸びた質問はありません')}</div><div class="panel"><h3>下がった質問</h3>${qList(qDn,'目立って下がった質問はありません')}</div></div>
+ <p class="muted" style="font-size:12.5px;margin:-4px 0 14px">質問の変化は、2回とも回答した人の選んだ段階（1〜5）の平均の差です。</p>
+ ${lower}`;
+ bindSync();
+ radar($('#tR'),[{name:'前回',v:av0,c:'#9aa7b8'},{name:'今回',v:av1,c:'#2f7fe0'}]);
+ $('#tp0').onchange=e=>{TS.p0=e.target.value;if(TS.p0===TS.p1){const o=PL.find(p=>p.k!==TS.p0);TS.p1=o.k}vTrend()};
+ $('#tp1').onchange=e=>{TS.p1=e.target.value;if(TS.p0===TS.p1)TS.p0='';vTrend()};
+ $('#tdp').onchange=e=>{TS.d=e.target.value;vTrend()};
+ if($('#tback'))$('#tback').onclick=e=>{e.preventDefault();TS.d='';vTrend()};
+ app.querySelectorAll('tr[data-d]').forEach(tr=>{const go=()=>{TS.d=tr.dataset.d;vTrend();scrollTo(0,0)};tr.onclick=go;tr.onkeydown=e=>{if(e.key==='Enter')go()}});
+}
+
 function vStatus(){
  const app=$('#app');const R=S.roster||[];
  if(!R.length){app.innerHTML=syncBar()+periodBanner()+`<div class="panel"><h2>職員名簿がまだありません</h2><p>「設定・データ」の「職員名簿」で、職員番号・氏名・部署のCSVを読み込むと、部署ごとの回答率と未回答の人の一覧が表示されます。</p><a class="btn pri" href="#settings" style="display:inline-flex;align-items:center;text-decoration:none">名簿を読み込む</a></div>`;bindSync();return}
- const by={};S.nurses.forEach(n=>{if(n.sid)by[n.sid]=n});const done=R.filter(r=>by[r.sid]);const rate=done.length/R.length*100;
+ const curP=perLabel(S.period),strict=(S.period&&(S.period.start||S.period.end))&&S.nurses.some(n=>n.per!=null);const by={};S.nurses.forEach(n=>{if(n.sid&&(!strict||n.per==null||n.per===curP))by[n.sid]=n});const done=R.filter(r=>by[r.sid]);const rate=done.length/R.length*100;
  const extra=S.nurses.filter(n=>!n.sid||!R.some(r=>r.sid===n.sid));
  const dmap={};R.forEach(r=>{const k=r.dept||'（部署未設定）';(dmap[k]=dmap[k]||{d:k,t:0,a:0,list:[]}).t++;if(by[r.sid])dmap[k].a++;else dmap[k].list.push(r)});
  const order=S.depts.slice().sort((a,b)=>deptRank(a.name)-deptRank(b.name)).map(d=>d.name);const drows=Object.values(dmap).sort((a,b)=>{const ia=order.indexOf(a.d),ib=order.indexOf(b.d);return(ia<0?999:ia)-(ib<0?999:ib)});
@@ -831,6 +921,9 @@ function vHome(){
   <rect x="-18" y="2" width="9" height="16" rx="2" fill="#9fe6dc"/><rect x="-5" y="-8" width="9" height="26" rx="2" fill="#9fd3fb"/><rect x="8" y="-18" width="9" height="36" rx="2" fill="#ffffff"/></g>
  <path d="M596 128 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4z" fill="#38b6e8"/><path d="M380 300 l3 7 l7 3 l-7 3 l-3 7 l-3 -7 l-7 -3 l7 -3z" fill="#5b63e0" opacity=".7"/>
  </svg>`;
+ if(MODE==='a'){const M=[['list','組織・一覧','全体の6角形チャートと、看護師さん一人ひとりの結果を見ます。'],['analysis','部署のスキル分析','部署ごとの強み・伸ばしたいスキルと、全部署の比較を見ます。印刷もできます。'],['trend','経時変化','前回の回答期間と今回の期間を比べて、スキルがどう変わったかを見ます。'],['status','回答状況','職員名簿をもとに、回答率と、まだ回答していない人を確認します。'],['settings','設定・データ','スプレッドシート連携・職員名簿の読み込み・部署の設定をします。']];
+ $('#app').innerHTML=`<section class="home"><div><h2>管理者ページ</h2><p>看護師さんが「わたしのスキルマップ」で回答した結果を、スプレッドシートから読み込んで確認・分析します。</p></div><div class="art">${art}</div></section>
+ <h3 class="howh">メニュー</h3><div class="how amenu">${M.map((m,k)=>`<a class="panel" href="#${m[0]}" style="text-decoration:none;color:inherit;display:block"><b class="no">${k+1}</b><h3>${m[1]}</h3><p class="muted" style="margin:0">${m[2]}</p></a>`).join('')}</div>`;return}
  $('#app').innerHTML=`<section class="home"><div><h2>${MODE==='r'?'もりんちゃんと<br>スキルアップしよう！':'あなたのスキルを、<br>見える形に。'}</h2>
  <p>${MODE==='r'?`${nq}の質問に答えると、あなたのスキルが、もりんちゃんのスキルポイントとレベルになります。スキルが伸びると装備がどんどん増えていきます。所要時間は約7分。`:`${nq}の質問に答えるだけで、6つの領域のスキルがスコアとチャートになります。所要時間は約7分です。`}</p>
  ${MODE==='r'?periodBanner():''}${MODE==='r'&&pState()!=='open'?'':`<div class="gostart">${MODE==='r'?'<span class="gohint">ここからスタート！</span>':''}<a class="go ${MODE==='r'?'gor':''}" href="#assess">${MODE==='r'&&S.nurses[0]?'もう一度答える ▶':MODE==='r'?'回答をはじめる ▶':'はじめる →'}</a></div>`}${MODE==='r'?(S.nurses[0]?'<a class="sub" href="#mine">前回の結果を見る</a>':''):'<a class="sub" href="#list">結果を見る</a>'}</div>
@@ -841,7 +934,7 @@ function vHome(){
  <h3 style="margin:28px 0 0">スコア化する6つの領域</h3><div class="axchips">${AX.map(a=>`<span>${a.n}</span>`).join('')}</div>`}
 function route(){RO.splice(0).forEach(r=>r.disconnect());if(MODE==='r'){const h=location.hash.slice(1)||'home';const base=h.split('-')[0];document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.r===base));if(base==='assess')vAssess(S.nurses[0]?.id||null);else if(base==='mine'&&S.nurses[0])vNurse(S.nurses[0].id);else vHome();return}const h=location.hash.slice(1)||'home';const base=h.split('-')[0];
  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.r===(base==='nurse'?'list':base)));
- if(base==='nurse')vNurse(h.slice(6));else if(base==='assess')vAssess(h.slice(7)||null);else if(base==='analysis'||base==='placement')vAnalysis(h.slice(9));else if(base==='settings')vSettings();else if(base==='status')vStatus();else if(base==='list')vList();else vHome()}
+ if(base==='nurse')vNurse(h.slice(6));else if(base==='analysis'||base==='placement')vAnalysis(h.slice(9));else if(base==='trend')vTrend();else if(base==='settings')vSettings();else if(base==='status')vStatus();else if(base==='list')vList();else vHome()}
 addEventListener('hashchange',()=>{if(!location.hash.startsWith('#assess'))D=null,step=0;route()});
 route();
 loadPeriod().then(()=>{const h=location.hash.slice(1)||'home';if(/^(home|assess|status)/.test(h))route()});

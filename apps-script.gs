@@ -22,7 +22,8 @@ function doPost(e) {
     const p = period_(), today = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd');
     if ((p.start && today < p.start) || (p.end && today > p.end)) return out_({ ok: false, error: 'closed' });
     if (!d || !d.row || !d.row.id || !d.row['氏名'] || !d.row['職員番号']) return out_({ ok: false, error: 'bad' });
-    const row = { '受信日時': new Date() };
+    const label = (p.start || p.end) ? (p.start + '〜' + p.end) : '期間指定なし'; // 回答期間ごとに別の行として残す（経時変化の比較用）
+    const row = { '受信日時': new Date(), '回答期間': label };
     Object.keys(d.row).slice(0, 200).forEach(function (k) { row[String(k).slice(0, 80)] = clean_(d.row[k]); });
     ['id', '職員番号'].forEach(function (k) { if (row[k] !== undefined && /^[0-9]+$/.test(String(row[k]))) row[k] = "'" + row[k]; }); // 先頭の0が消えないよう文字列として保存
     const sh = sheet_();
@@ -34,12 +35,14 @@ function doPost(e) {
       sh.setFrozenRows(1);
     }
     const vals = header.map(function (h) { return h in row ? row[h] : ''; });
-    const idCol = header.indexOf('id') + 1;
+    const idCol = header.indexOf('id') + 1, perCol = header.indexOf('回答期間') + 1;
     let target = 0;
     if (sh.getLastRow() > 1) {
       const ids = sh.getRange(2, idCol, sh.getLastRow() - 1, 1).getValues();
+      const pers = sh.getRange(2, perCol, sh.getLastRow() - 1, 1).getValues();
       for (let i = 0; i < ids.length; i++) {
-        if (String(ids[i][0]).replace(/^'/, '') === String(row.id).replace(/^'/, '')) { target = i + 2; break; }
+        // 同じ人・同じ回答期間なら上書き、期間が違えば新しい行に追加
+        if (String(ids[i][0]).replace(/^'/, '') === String(row.id).replace(/^'/, '') && String(pers[i][0]) === label) { target = i + 2; break; }
       }
     }
     if (target) sh.getRange(target, 1, 1, vals.length).setValues([vals]);
