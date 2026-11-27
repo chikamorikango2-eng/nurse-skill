@@ -1,6 +1,6 @@
 {
   "name": "看護スキル総合力マップ（管理者用）",
-  "short_name": "スキルマップ",
+  "short_name": "スキルマップ管理",
   "lang": "ja",
   "start_url": "./",
   "scope": "./",
